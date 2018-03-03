@@ -1,17 +1,21 @@
-##[auto]
+'''
+[#auto]
 
-# local
+#local
 
-# web
+#web
 
-# installer
-##[auto]
+#installer[-auto]
 
-# local
+#installer-local
 
-# web
+#installer-web
 
+#web
+# - można powtarzać się
 
-''' wyżej miejsce dla adresów '''
+'''
+
+''' wyżej miejsce dla adresów. wyszukiwanie jest pryorytetowane z góry do dołu '''
 
 
