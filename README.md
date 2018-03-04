@@ -8,3 +8,9 @@ But main differences are:
 # Build
 Because lnk.py file has to be a **single** file, building such file needs to be splitted, otherwise code will be really messy.  
 For that purpos there is pyincluder.py
+
+# To do
+- git versioning
+- installers
+- target argumets flags (like windows/linux)
+- script arguments parsing (f.e. "$lnk-py:path" if only want to get path printed on stdout, or additionally download if not present)
