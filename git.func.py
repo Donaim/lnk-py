@@ -2,12 +2,12 @@
 import os
 
 def git(at):
-    def get_first_local_dir_at():
+    def get_first_local():
         for a in at.args_t:
             if a.mode.name == 'local': return a 
 
     repository = at.command
-    first_local_at = get_first_local_dir_at()
+    first_local_at = get_first_local()
 
     try:
         subprocess.call(["git", "clone"] + [repository] + [os.path.dirname(first_local_at.command)])

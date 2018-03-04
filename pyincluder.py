@@ -50,12 +50,14 @@ def include(line):
 def simple_write(line):
     output_scope.outtext += line
     # writer.write(line)
+def is_import_line(strip):
+    return strip.startswith("import") or ( strip.startswith("from") and "import" in strip )
 def parse_line(line):
     strip = line.strip()
     if strip.startswith(INCLUDE_KEYWORD): 
         include(line)
         simple_write('\n')
-    elif MOVE_IMPORTS and strip.startswith("import"):
+    elif MOVE_IMPORTS and is_import_line(strip):
         imports_list.append(strip)
     else: simple_write(line)
 
