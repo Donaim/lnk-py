@@ -2,6 +2,7 @@
 
 TARGET_INFO='''
 README.md
+C:\\Windows\\system32\cmd.exe
 https://facebook.com
 C:\\
 # L::/.//blabla
