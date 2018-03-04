@@ -2,9 +2,9 @@
 
 TARGET_INFO='''
 README.md
+https://facebook.com
 C:\\
 # L::/.//blabla
-# https://facebook.com
 
 $local
 # README.md
