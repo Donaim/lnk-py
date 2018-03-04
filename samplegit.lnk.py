@@ -5,36 +5,7 @@ import sys # for stderr
 
 TARGET_INFO='''
 C:\\Users\\d0naim\\Desktop\\Probf\\rec.py
-
-$git
 https://github.com/Donaim/ProblemFlawiusza.git
-
-$local
-
-
-README.md
-# C:\\Windows\\system32\cmd.exe
-# C:\\Windows\\notepad.exe
-https://facebook.com
-# C:\\
-# L::/.//blabla
-
-$local
-# README.md
-
-$web
-https://github.coN
-
-$install
-
-$install_local
-
-$install_web
-
-$web
-# mozna powtarzac sie
-https://google.com
-
 '''
 
 # wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
