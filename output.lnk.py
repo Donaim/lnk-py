@@ -4,6 +4,7 @@ import subprocess
 import re
 import sys
 
+
 TARGET_INFO='''
 ~/Desktop/Probf/primitive.py
 https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
@@ -88,15 +89,12 @@ class mode_funcs(object):
     
     
     def git(at):
-        def get_first_local():
-            for a in at.args_t:
-                if a.mode.name == 'local': return a 
-    
         repository = at.command
-        first_local_at = get_first_local()
+        first_local_at = mode_funcs._get_first_local()
+        file = mode_funcs._format_path(first_local_at.command)
     
         try:
-            subprocess.call(["git", "clone"] + [repository] + [os.path.dirname(first_local_at.command)])
+            subprocess.call(["git", "clone"] + [repository] + [os.path.dirname(file)])
             # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
         except Exception as ex:
             print("Couldn't download git repository {}".format(repository), file=sys.stderr)
