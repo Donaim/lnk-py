@@ -1,10 +1,13 @@
 
 
 TARGET_INFO='''
-some local path
+some web path
+
 $local
-README.md
+# README.md
+
 $web
+https://github.coN
 
 $install
 
@@ -13,7 +16,8 @@ $install_local
 $install_web
 
 $web
-# - mozna powtarzac sie
+# mozna powtarzac sie
+https://google.com
 
 '''
 
@@ -32,6 +36,7 @@ class mode_funcs(object):
         if arg == "README.md": raise Exception("Dont like readmes!!!")
         print("Hello from local", arg)
     def web(me, arg):
+        if arg[-1] == 'N': raise Exception(":(")
         print("Hello from web", arg)
     def install(me, arg): raise Exception("Not supposed to be here")
     def install_local(me, arg):
