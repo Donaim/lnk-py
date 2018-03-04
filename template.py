@@ -37,7 +37,8 @@ filtered  = filter(lambda line: len(line) > 0 and not line.isspace() and line[0]
 
 # filtered contains non-empty non-comment lines from TARGET_INFO
 
-import sys # for stderr
+import sys
+# for stderr
 
 class arg_tuple(object):
     def __init__(self, command, mode):

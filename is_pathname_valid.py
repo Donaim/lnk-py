@@ -1,6 +1,9 @@
+import os
+import sys
+import subprocess
+
 def _is_pathname_valid(pathname: str) -> bool: # https://stackoverflow.com/a/34102855/7038168
     try:
-        import os, sys, subprocess
         
         if len(pathname) < 1: return False
         _, pathname = os.path.splitdrive(pathname)

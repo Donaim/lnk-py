@@ -1,10 +1,8 @@
 import urllib.request
 import os
 import subprocess
-import os
 import re
-import os, sys, subprocess
-import sys # for stderr
+import sys
 
 TARGET_INFO='''
 ~/Desktop/Probf/primitive.py
@@ -196,6 +194,7 @@ class mode_initializators(object):
         return result and not any((result.groupdict().get(key) for key in ('private_ip', 'private_host')))
     
 
+    
     def _is_pathname_valid(pathname: str) -> bool: # https://stackoverflow.com/a/34102855/7038168
         try:
             
@@ -248,6 +247,7 @@ filtered  = filter(lambda line: len(line) > 0 and not line.isspace() and line[0]
 
 # filtered contains non-empty non-comment lines from TARGET_INFO
 
+# for stderr
 
 class arg_tuple(object):
     def __init__(self, command, mode):

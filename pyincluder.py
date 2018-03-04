@@ -58,7 +58,7 @@ def parse_line(line):
         include(line)
         simple_write('\n')
     elif MOVE_IMPORTS and is_import_line(strip):
-        imports_list.append(strip)
+        if not strip in imports_list: imports_list.append(strip)
     else: simple_write(line)
 
 for line in reader:
