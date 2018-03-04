@@ -81,9 +81,11 @@ class mode(object):
     def invoke(self):
         for a in self.args:
             self.func(self, a)
-    def init(self, init_func, modes):
-        for a in self.args:
-            init_func(self, modes, a)
+    def init(self):
+        if self.name in mode_inits_di:
+            init_func = mode_inits_di[self.name]
+            for a in self.args:
+                init_func(self, modes, a)
    
 
 mode_lookup = dict(map(lambda p: (p[0], mode(p[0], p[1])), mode_funcs_di.items()))
@@ -104,9 +106,8 @@ def parse_args(lines):
 
 parse_args(filtered)
 # print(list(map(lambda m: (m.name, m.args), modes))) # ok
+
 for m in modes:
-    if m.name in mode_inits_di:
-        print(m.name)
-        m.init(mode_inits_di[m.name], modes)
+    m.init()
 for m in modes:
     m.invoke()
