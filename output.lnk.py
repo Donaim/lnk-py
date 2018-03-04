@@ -7,7 +7,7 @@ import os, sys, subprocess
 import sys # for stderr
 
 TARGET_INFO='''
-C:\\Users\\d0naim\\Desktop\\Probf\\primitive.py
+~/Desktop/Probf/primitive.py
 https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 # https://github.com/Donaim/ProblemFlawiusza.git
 '''
@@ -26,9 +26,14 @@ class mode_funcs(object):
     
     
     def auto(at): raise Exception("Not supposed to be here")
+    def _format_path(path):
+        path = path.replace('/', os.path.sep).replace('\\', os.path.sep)
+        if (path[0] == '~'): return os.path.expanduser('~') + path[1:]
+        else: return path
+    
     def local(at):
         path = at.command
-        path = path.replace('/', os.path.sep).replace('\\', os.path.sep)
+        path = mode_funcs._format_path(path)
         
         isdir = False
         if path[-1] == os.path.sep: isdir = True
@@ -53,17 +58,19 @@ class mode_funcs(object):
             except: pass
             return re
     
-        url = at.command
         target_at = mode_funcs._get_first_local(at.args_t)
         file_name = target_at.command
+        file_name = mode_funcs._format_path(file_name)
         di = os.path.dirname(file_name)
         if not os.path.isdir(di): os.mkdir(di)
     
+        url = at.command
         u = urllib.request.urlopen(url)
+    
         meta = u.info()
         file_size = try_get_file_size(meta)
-        f = open(file_name, 'wb')
     
+        f = open(file_name, 'wb')
         file_size_dl = 0
         block_sz = 8192
         while True:
@@ -72,9 +79,9 @@ class mode_funcs(object):
     
             file_size_dl += len(buffer)
             f.write(buffer)
+       
             status = "downloading.. {:10d}b".format(file_size_dl)
-            if file_size > 0: status += " ({:3.2f})".format(file_size_dl * 100. / file_size)
-            # status = status + chr(8)*(len(status)+1)
+            if file_size > 0: status += " ({:3.2f} %)".format(file_size_dl * 100. / file_size)
             print(status)
     
         f.close()
@@ -282,7 +289,7 @@ def parse_args(lines):
             if mname in mode_lookup:
                 curr = mode_lookup[mname]
                 continue
-            else: raise Exception("unknown mode name: {}".format(mname))
+            # else: raise Exception("unknown mode name: {}".format(mname))
         args_t.append( arg_tuple(line, curr) )
 parse_args(filtered)
 

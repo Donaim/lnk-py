@@ -1,7 +1,7 @@
 
 
 TARGET_INFO='''
-C:\\Users\\d0naim\\Desktop\\Probf\\primitive.py
+~/Desktop/Probf/primitive.py
 https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 # https://github.com/Donaim/ProblemFlawiusza.git
 '''
@@ -79,7 +79,7 @@ def parse_args(lines):
             if mname in mode_lookup:
                 curr = mode_lookup[mname]
                 continue
-            else: raise Exception("unknown mode name: {}".format(mname))
+            # else: raise Exception("unknown mode name: {}".format(mname))
         args_t.append( arg_tuple(line, curr) )
 parse_args(filtered)
 
