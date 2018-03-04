@@ -124,7 +124,7 @@ def is_valid_url(value, public = False):
         (result.groupdict().get(key) for key in ('private_ip', 'private_host'))
     )
 
-import os, tempfile
+import os
 
 def is_pathname_valid(pathname: str) -> bool: # https://stackoverflow.com/a/34102855/7038168
     try:
