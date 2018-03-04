@@ -9,6 +9,8 @@ output   = sys.argv[2]
 reader = open(source, 'r', encoding='utf-8')
 writer = open(output, 'w+', encoding="utf-8")
 
+include_list = []
+
 def count_whitespace(line):
     count = 0
     for c in line:
@@ -28,18 +30,25 @@ def include(line):
     indent = ' ' * count_whitespace(line)
     filepath = get_include_file(line)
     if not filepath: # not a valid include
-        writer.write(line)
+        simple_copy_line(line)
         return
-    
+    else:
+        if filepath in include_list:
+            print("already copied \"{}\"".format(filepath))
+        else:
+            include_list.append(filepath)
+
     print("including \"{}\"".format(filepath))
     with open(filepath, 'r') as ireader:
         for iline in ireader:
             parse_line(indent + iline)
+def simple_copy_line(line):
+    writer.write(line)
 def parse_line(line):
     if line.strip().startswith(INCLUDE_KEYWORD): 
         include(line)
         writer.write('\n')
-    else: writer.write(line)
+    else: simple_copy_line(line)
 
 for line in reader:
     parse_line(line)
