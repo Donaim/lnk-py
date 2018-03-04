@@ -1,7 +1,7 @@
-import os
-
-def is_pathname_valid(pathname: str) -> bool: # https://stackoverflow.com/a/34102855/7038168
+def _is_pathname_valid(pathname: str) -> bool: # https://stackoverflow.com/a/34102855/7038168
     try:
+        import os, sys, subprocess
+        
         if len(pathname) < 1: return False
         _, pathname = os.path.splitdrive(pathname)
         root_dirname = os.environ.get('HOMEDRIVE', 'C:') \
@@ -18,4 +18,3 @@ def is_pathname_valid(pathname: str) -> bool: # https://stackoverflow.com/a/3410
                     return False
     except TypeError as exc: return False
     else: return True
-        

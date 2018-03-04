@@ -1,15 +1,20 @@
 INCLUDE_KEYWORD = "#include"
 INCLUDE_LEN = len(INCLUDE_KEYWORD)
 
+MOVE_IMPORTS = True
+
 import sys
 
 source = sys.argv[1]
 output   = sys.argv[2]
 
 reader = open(source, 'r', encoding='utf-8')
-writer = open(output, 'w+', encoding="utf-8")
 
 include_list = []
+imports_list = []
+
+class output_scope(object):
+    outtext = ""
 
 def count_whitespace(line):
     count = 0
@@ -30,7 +35,7 @@ def include(line):
     indent = ' ' * count_whitespace(line)
     filepath = get_include_file(line)
     if not filepath: # not a valid include
-        simple_copy_line(line)
+        simple_write(line)
         return
     else:
         if filepath in include_list:
@@ -42,16 +47,25 @@ def include(line):
     with open(filepath, 'r') as ireader:
         for iline in ireader:
             parse_line(indent + iline)
-def simple_copy_line(line):
-    writer.write(line)
+def simple_write(line):
+    output_scope.outtext += line
+    # writer.write(line)
 def parse_line(line):
-    if line.strip().startswith(INCLUDE_KEYWORD): 
+    strip = line.strip()
+    if strip.startswith(INCLUDE_KEYWORD): 
         include(line)
-        writer.write('\n')
-    else: simple_copy_line(line)
+        simple_write('\n')
+    elif MOVE_IMPORTS and strip.startswith("import"):
+        imports_list.append(strip)
+    else: simple_write(line)
 
 for line in reader:
     parse_line(line)
 
-writer.close()
 reader.close()
+
+if MOVE_IMPORTS:
+    output_scope.outtext = "\n".join(imports_list) + output_scope.outtext
+
+with open(output, 'w+', encoding="utf-8") as writer:
+    writer.write(output_scope.outtext)

@@ -76,11 +76,10 @@ url_regex = re.compile(
 
 url_pattern = re.compile(url_regex)
 
-def is_valid_url(value, public = False):
-    result = url_pattern.match(value)
+def _is_valid_url(value, public = False):
+    result = mode_initializators.url_pattern.match(value)
     if not public:
         return result
 
-    return result and not any(
-        (result.groupdict().get(key) for key in ('private_ip', 'private_host'))
-    )
+    return result and not any((result.groupdict().get(key) for key in ('private_ip', 'private_host')))
+
