@@ -27,14 +27,12 @@ $web
 
 # modes can be added of course
 class mode_funcs(object):
-    def auto(me, arg):
-        print("Hello from auto", arg)
+    def auto(me, arg): raise Exception("Not supposed to be here")
     def local(me, arg):
         print("Hello from local", arg)
     def web(me, arg):
         print("Hello from web", arg)
-    def install(me, arg):
-        print("Hello from install", arg)
+    def install(me, arg): raise Exception("Not supposed to be here")
     def install_local(me, arg):
         print("Hello from install_local", arg)
     def install_web(me, arg):
@@ -42,9 +40,11 @@ class mode_funcs(object):
 class mode_initializators(object):
     def auto(me, mode_lookup, arg):
         if (arg == 'some local path'):
+            if not 'local' in mode_lookup: raise Exception("Auto mode found local path, but not handler for it exists!") 
             me.args.remove(arg)
             mode_lookup['local'].args.append(arg)
         elif(arg == 'some web path'):
+            if not 'web' in mode_lookup: raise Exception("Auto mode found web path, but not handler for it exists!") 
             me.args.remove(arg)
             mode_lookup['web'].args.append(arg)
         else: raise Exception("Path \"{}\" is neither local nor web".format(arg))
@@ -84,7 +84,6 @@ class mode(object):
             init_func = mode_inits_di[self.name]
             for a in self.args:
                 init_func(self, mode_lookup, a)
-   
 
 mode_lookup = dict(map(lambda p: (p[0], mode(p[0], p[1])), mode_funcs_di.items()))
 # modes = mode_lookup.values()
