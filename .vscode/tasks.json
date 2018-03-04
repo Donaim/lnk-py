@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "py pyincluder.py",
+            "command": "py pyincluder.lnk.py",
             "args": [
                 "template.py",
                 "output.lnk.py"
