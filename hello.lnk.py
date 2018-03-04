@@ -1,7 +1,7 @@
 
 
 TARGET_INFO='''
-ahdahdjah sd
+some local path
 $local
 README.md
 $web
@@ -40,27 +40,25 @@ class mode_funcs(object):
     def install_web(me, arg):
         print("Hello from install_web", arg)
 class mode_initializators(object):
-    def auto(me, modes, arg):
-        print("HELLO FORM INIT AUTO!")
+    def auto(me, mode_lookup, arg):
         if (arg == 'some local path'):
             me.args.remove(arg)
-            modes['local'].args.append(arg)
+            mode_lookup['local'].args.append(arg)
         elif(arg == 'some web path'):
             me.args.remove(arg)
-            modes['web'].args.append(arg)
+            mode_lookup['web'].args.append(arg)
         else: raise Exception("Path \"{}\" is neither local nor web".format(arg))
     
-    def install_auto(me, modes, arg):
+    def install_auto(me, mode_lookup, arg):
         raise NotImplementedError()
         pass
 
+########## parsing classes
 mode_funcs_static = filter(lambda name: name[0] != '_', dir(mode_funcs))
 mode_funcs_di = dict(map(lambda name: (name, getattr(mode_funcs, name)), mode_funcs_static))
-mode_names = list(mode_funcs_di.keys())
 
 mode_inits_static = filter(lambda name: name[0] != '_', dir(mode_initializators))
 mode_inits_di = dict(map(lambda name: (name, getattr(mode_initializators, name)), mode_inits_static))
-mode_inits_names = list(mode_inits_di.keys())
 
         ###########
        ## PARSING ##
@@ -85,7 +83,7 @@ class mode(object):
         if self.name in mode_inits_di:
             init_func = mode_inits_di[self.name]
             for a in self.args:
-                init_func(self, modes, a)
+                init_func(self, mode_lookup, a)
    
 
 mode_lookup = dict(map(lambda p: (p[0], mode(p[0], p[1])), mode_funcs_di.items()))
