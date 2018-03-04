@@ -90,7 +90,7 @@ class mode_funcs(object):
     
     def git(at):
         repository = at.command
-        first_local_at = mode_funcs._get_first_local()
+        first_local_at = mode_funcs._get_first_local(at.args_t)
         file = mode_funcs._format_path(first_local_at.command)
     
         try:
