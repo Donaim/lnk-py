@@ -6,10 +6,9 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "py constructor.py",
+            "command": "py pyincluder.py",
             "args": [
                 "template.py",
-                "basic.tmp.py",
                 "output.lnk.py"
             ],
             "group": "test",

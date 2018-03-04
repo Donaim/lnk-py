@@ -34,7 +34,7 @@ https://google.com
 
 DEFAULT_MODE = 'auto'
 
->>>>>>>REPLACE
+#include <modes.py>
 
 ########## parsing classes
 mode_funcs_static = filter(lambda name: name[0] != '_', dir(mode_funcs))
