@@ -29,6 +29,7 @@ $web
 class mode_funcs(object):
     def auto(me, arg): raise Exception("Not supposed to be here")
     def local(me, arg):
+        if arg == "README.md": raise Exception("Dont like readmes!!!")
         print("Hello from local", arg)
     def web(me, arg):
         print("Hello from web", arg)
@@ -69,6 +70,8 @@ filtered  = filter(lambda line: len(line) > 0 and not line.isspace() and line[0]
 
 # filtered contains non-empty non-comment lines from TARGET_INFO
 
+import sys
+
 class mode(object):
     def __init__(self, name, func):
         self.name = name
@@ -76,7 +79,13 @@ class mode(object):
         self.args = []
     def invoke(self):
         for a in self.args:
-            self.func(self, a)
+            try:
+                self.func(self, a)
+                return True
+            except Exception as ex:
+                print(ex, file=sys.stderr)
+        return False
+
     def init(self):
         if self.name in mode_inits_di:
             init_func = mode_inits_di[self.name]
@@ -102,4 +111,4 @@ parse_args(filtered)
 for m in modes:
     m.init()
 for m in modes:
-    m.invoke()
+    if m.invoke(): break
