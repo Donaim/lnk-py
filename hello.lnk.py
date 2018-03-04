@@ -75,7 +75,7 @@ filtered  = filter(lambda line: len(line) > 0 and not line.isspace() and line[0]
 
 # filtered contains non-empty non-comment lines from TARGET_INFO
 
-import sys
+import sys # for stderr
 
 class mode(object):
     def __init__(self, name, func):
