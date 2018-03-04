@@ -65,7 +65,7 @@ mode_inits_di = dict(map(lambda name: (name, getattr(mode_initializators, name))
         ###########
 
 split = TARGET_INFO.split('\n')
-filtered  = filter(lambda line: len(line) > 0 and line[0] != '#', split)
+filtered  = filter(lambda line: len(line) > 0 and not line.isspace() and line[0] != '#', split)
 
 # filtered contains non-empty non-comment lines from TARGET_INFO
 
