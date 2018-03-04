@@ -91,9 +91,9 @@ class mode(object):
         self.name = name
         self.func = func
     def invoke_all(self, args):
-        for a in args:
-            if a.name == self.name: 
-                if a.invoke(): return True
+        for a_tuple in args:
+            if a_tuple.mode == self: 
+                if a_tuple.invoke(): return True
         return False
     def init(self, args):
         if self.name in mode_inits_di:
