@@ -31,31 +31,29 @@ https://google.com
 
 # modes can be added of course
 class mode_funcs(object):
-    def auto(me, arg): raise Exception("Not supposed to be here")
-    def local(me, arg):
-        if arg == "README.md": raise Exception("Dont like readmes!!!")
-        print("Hello from local", arg)
-    def web(me, arg):
-        if arg[-1] == 'N': raise Exception(":(")
-        print("Hello from web", arg)
-    def install(me, arg): raise Exception("Not supposed to be here")
-    def install_local(me, arg):
-        print("Hello from install_local", arg)
-    def install_web(me, arg):
-        print("Hello from install_web", arg)
+    def auto(at): raise Exception("Not supposed to be here")
+    def local(at):
+        if at.command == "README.md": raise Exception("Dont like readmes!!!")
+        print("Hello from local", at.command)
+    def web(at):
+        if at.command[-1] == 'N': raise Exception(":(")
+        print("Hello from web", at.command)
+    def install(at): raise Exception("Not supposed to be here")
+    def install_local(at):
+        print("Hello from install_local", at.command)
+    def install_web(at):
+        print("Hello from install_web", at.command)
 class mode_initializators(object):
-    def auto(me, mode_lookup, arg):
-        if (arg == 'some local path'):
+    def auto(at, mode_lookup):
+        if (at.command == 'some local path'):
             if not 'local' in mode_lookup: raise Exception("Auto mode found local path, but no handler for it exists!") 
-            me.args.remove(arg)
-            mode_lookup['local'].args.append(arg)
-        elif(arg == 'some web path'):
+            at.mode = mode_lookup['local']
+        elif(at.command == 'some web path'):
             if not 'web' in mode_lookup: raise Exception("Auto mode found web path, but no handler for it exists!") 
-            me.args.remove(arg)
-            mode_lookup['web'].args.append(arg)
-        else: raise Exception("Path \"{}\" is neither local nor web".format(arg))
+            at.mode = mode_lookup['web']
+        else: raise Exception("Path \"{}\" is neither local nor web".format(at.command))
     
-    def install_auto(me, mode_lookup, arg):
+    def install_auto(at, mode_lookup):
         raise NotImplementedError()
         pass
 
@@ -77,43 +75,49 @@ filtered  = filter(lambda line: len(line) > 0 and not line.isspace() and line[0]
 
 import sys # for stderr
 
+class arg_tuple(object):
+    def __init__(self, command, mode):
+        self.command = command
+        self.mode = mode
+    def invoke(self):
+        try:
+            self.mode.func(self)
+            return True
+        except Exception as ex:
+            print(ex, file=sys.stderr)
+            return False
 class mode(object):
     def __init__(self, name, func):
         self.name = name
         self.func = func
-        self.args = []
-    def invoke(self):
-        for a in self.args:
-            try:
-                self.func(self, a)
-                return True
-            except Exception as ex:
-                print(ex, file=sys.stderr)
+    def invoke_all(self, args):
+        for a in args:
+            if a.name == self.name: 
+                if a.invoke(): return True
         return False
-
-    def init(self):
+    def init(self, args):
         if self.name in mode_inits_di:
             init_func = mode_inits_di[self.name]
-            for a in self.args:
-                init_func(self, mode_lookup, a)
+            for a_tuple in args:
+                if a_tuple.mode == self:
+                    init_func(a_tuple, mode_lookup)
 
 mode_lookup = dict(map(lambda p: (p[0], mode(p[0], p[1])), mode_funcs_di.items()))
-modes = [mode_lookup['auto']]
+args_t = []
 
 def parse_args(lines):
-    curr = modes[0]
+    curr = mode_lookup['auto']
     for line in lines:
         if line[0] == '$':
             mname = line[1:].strip()
             if mname in mode_lookup:
                 curr = mode_lookup[mname]
-                modes.append(curr)
                 continue
             else: raise Exception("unknown mode name: {}".format(mname))
-        curr.args.append(line)
+        args_t.append( arg_tuple(line, curr) )
 parse_args(filtered)
 
-for m in modes:
-    m.init()
-for m in modes:
-    if m.invoke(): break
+for (name, m) in mode_lookup.items():
+    m.init(args_t)
+for t in args_t:
+    if t.invoke(): break
