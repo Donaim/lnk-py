@@ -1,11 +1,20 @@
 
 
 TARGET_INFO='''
+
+C:\\Users\\d0naim\\Desktop\\Probf\\
+
+$git
+https://github.com/Donaim/ProblemFlawiusza.git
+
+$local
+
+
 README.md
 # C:\\Windows\\system32\cmd.exe
-C:\\Windows\\notepad.exe
+# C:\\Windows\\notepad.exe
 https://facebook.com
-C:\\
+# C:\\
 # L::/.//blabla
 
 $local

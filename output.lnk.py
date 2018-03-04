@@ -1,13 +1,23 @@
+import os
 import re
 import os, sys, subprocess
 import sys # for stderr
 
 TARGET_INFO='''
+
+C:\\Users\\d0naim\\Desktop\\Probf\\
+
+$git
+https://github.com/Donaim/ProblemFlawiusza.git
+
+$local
+
+
 README.md
 # C:\\Windows\\system32\cmd.exe
-C:\\Windows\\notepad.exe
+# C:\\Windows\\notepad.exe
 https://facebook.com
-C:\\
+# C:\\
 # L::/.//blabla
 
 $local
@@ -66,6 +76,27 @@ class mode_funcs(object):
         print("Hello from install_local", at.command)
     def install_web(at):
         print("Hello from install_web", at.command)
+    
+    
+    def git(at):
+        def get_first_local_dir_at():
+            for a in at.args_t:
+                if a.mode.name == 'local' and a.command[-1] == os.path.sep: return a 
+    
+        repository = at.command
+        first_local_at = get_first_local_dir_at()
+    
+        try:
+            subprocess.call(["git", "clone"] + [repository] + [first_local_at.command])
+            # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
+        except Exception as ex:
+            print("Couldn't download git repository {}".format(repository), file=sys.stderr)
+            raise ex
+    
+        # after clonning - run
+        first_local_at.invoke()
+        
+
 
 class mode_initializators(object):
     

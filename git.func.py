@@ -2,9 +2,9 @@
 import os
 
 def git(at):
-    def get_first_local_dir():
+    def get_first_local_dir_at():
         for a in at.args_t:
-            if a.mode.name == 'local' and os.path.isdir(a.command): return a 
+            if a.mode.name == 'local' and a.command[-1] == os.path.sep: return a 
 
     repository = at.command
     first_local_at = get_first_local_dir_at()
