@@ -1,6 +1,6 @@
 TARGET_INFO='''
 ~/Documents/dev/pyincluder/pyincluder.py
-https://raw.githubusercontent.com/Donaim/pyincluder/includer/pyincluder.py
+https://raw.githubusercontent.com/Donaim/pyincluder/master/pyincluder.py
 https://github.com/Donaim/pyincluder.git
 '''
 
