@@ -1,7 +1,10 @@
 
 
 TARGET_INFO='''
-some web path
+README.md
+C:\\
+# L::/.//blabla
+# https://facebook.com
 
 $local
 # README.md
@@ -29,33 +32,9 @@ https://google.com
        ## MODES ##
         #########
 
-# modes can be added of course
-class mode_funcs(object):
-    def auto(at): raise Exception("Not supposed to be here")
-    def local(at):
-        if at.command == "README.md": raise Exception("Dont like readmes!!!")
-        print("Hello from local", at.command)
-    def web(at):
-        if at.command[-1] == 'N': raise Exception(":(")
-        print("Hello from web", at.command)
-    def install(at): raise Exception("Not supposed to be here")
-    def install_local(at):
-        print("Hello from install_local", at.command)
-    def install_web(at):
-        print("Hello from install_web", at.command)
-class mode_initializators(object):
-    def auto(at, mode_lookup):
-        if (at.command == 'some local path'):
-            if not 'local' in mode_lookup: raise Exception("Auto mode found local path, but no handler for it exists!") 
-            at.mode = mode_lookup['local']
-        elif(at.command == 'some web path'):
-            if not 'web' in mode_lookup: raise Exception("Auto mode found web path, but no handler for it exists!") 
-            at.mode = mode_lookup['web']
-        else: raise Exception("Path \"{}\" is neither local nor web".format(at.command))
-    
-    def install_auto(at, mode_lookup):
-        raise NotImplementedError()
-        pass
+DEFAULT_MODE = 'auto'
+
+>>>>>>>REPLACE
 
 ########## parsing classes
 mode_funcs_static = filter(lambda name: name[0] != '_', dir(mode_funcs))
@@ -106,7 +85,7 @@ mode_lookup = dict(map(lambda p: (p[0], mode(p[0], p[1])), mode_funcs_di.items()
 args_t = []
 
 def parse_args(lines):
-    curr = mode_lookup['auto']
+    curr = mode_lookup[DEFAULT_MODE]
     for line in lines:
         if line[0] == '$':
             mname = line[1:].strip()
