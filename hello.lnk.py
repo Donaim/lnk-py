@@ -13,11 +13,11 @@ $install_local
 $install_web
 
 $web
-# - można powtarzać się
+# - mozna powtarzac sie
 
 '''
 
-# wyżej miejsce dla adresów. wyszukiwanie jest pryorytetowane z góry do dołu
+# wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
 # first non-emty non-comment line is defined to be the beginning of TARGET_INFO string
 
 
