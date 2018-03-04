@@ -1,8 +1,7 @@
 
 
 TARGET_INFO='''
-
-C:\\Users\\d0naim\\Desktop\\Probf\\
+C:\\Users\\d0naim\\Desktop\\Probf\\rec.py
 
 $git
 https://github.com/Donaim/ProblemFlawiusza.git

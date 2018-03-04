@@ -1,4 +1,5 @@
 
+import subprocess
 
 def auto(at): raise Exception("Not supposed to be here")
 def local(at):
@@ -11,7 +12,7 @@ def local(at):
     if isdir: path += 'lnkpy-run.py'
     
     try:
-        subprocess.call([path] + sys.argv)
+        subprocess.check_call([path] + sys.argv, shell=True)
         # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
     except Exception as ex:
         print("Couldn't open file {}".format(path), file=sys.stderr)
