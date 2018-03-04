@@ -59,6 +59,7 @@ class arg_tuple(object):
     def __init__(self, command, mode):
         self.command = command
         self.mode = mode
+        self.mode_lookup = mode_lookup
     def invoke(self):
         try:
             self.mode.func(self)
@@ -80,7 +81,7 @@ class mode(object):
             init_func = mode_inits_di[self.name]
             for a_tuple in args:
                 if a_tuple.mode == self:
-                    init_func(a_tuple, mode_lookup)
+                    init_func(a_tuple)
 
 mode_lookup = dict(map(lambda p: (p[0], mode(p[0], p[1])), mode_funcs_di.items()))
 args_t = []

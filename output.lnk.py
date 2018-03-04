@@ -37,179 +37,33 @@ DEFAULT_MODE = 'auto'
 
 DEFAULT_MODE = 'auto'
 
-    # The MIT License (MIT)
 
-    # Copyright (c) 2013-2014 Konsta Vesterinen
+class mode_funcs(object):
+    def auto(at): raise Exception("Not supposed to be here")
+    def local(at):
+        path = at.command
+        path = path.replace('/', os.path.sep).replace('\\', os.path.sep)
+        
+        isdir = False
+        if path[-1] == os.path.sep: isdir = True
+        
+        if isdir: path += 'lnkpy-run.py'
+        
+        try:
+            subprocess.call([path] + sys.argv)
+            # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
+        except Exception as ex:
+            print("Couldn't open file {}".format(path), file=sys.stderr)
+            raise ex
 
-    # Permission is hereby granted, free of charge, to any person obtaining a copy of
-    # this software and associated documentation files (the "Software"), to deal in
-    # the Software without restriction, including without limitation the rights to
-    # use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-    # the Software, and to permit persons to whom the Software is furnished to do so,
-    # subject to the following conditions:
-
-    # The above copyright notice and this permission notice shall be included in all
-    # copies or substantial portions of the Software.
-
-    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-    # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-    # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-    # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-    # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-    # SOURCE REPOSITORY: https://github.com/kvesteri/validators
-
-import re
-
-ip_middle_octet = u"(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5]))"
-ip_last_octet = u"(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))"
-
-url_regex = re.compile(
-    u"^"
-    # protocol identifier
-    u"(?:(?:https?|ftp)://)"
-    # user:pass authentication
-    u"(?:[-a-z\u00a1-\uffff0-9._~%!$&'()*+,;=:]+"
-    u"(?::[-a-z0-9._~%!$&'()*+,;=:]*)?@)?"
-    u"(?:"
-    u"(?P<private_ip>"
-    # IP address exclusion
-    # private & local networks
-    u"(?:(?:10|127)" + ip_middle_octet + u"{2}" + ip_last_octet + u")|"
-    u"(?:(?:169\.254|192\.168)" + ip_middle_octet + ip_last_octet + u")|"
-    u"(?:172\.(?:1[6-9]|2\d|3[0-1])" + ip_middle_octet + ip_last_octet + u"))"
-    u"|"
-    # private & local hosts
-    u"(?P<private_host>"
-    u"(?:localhost))"
-    u"|"
-    # IP address dotted notation octets
-    # excludes loopback network 0.0.0.0
-    # excludes reserved space >= 224.0.0.0
-    # excludes network & broadcast addresses
-    # (first & last IP address of each class)
-    u"(?P<public_ip>"
-    u"(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])"
-    u"" + ip_middle_octet + u"{2}"
-    u"" + ip_last_octet + u")"
-    u"|"
-    # host name
-    u"(?:(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)"
-    # domain name
-    u"(?:\.(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)*"
-    # TLD identifier
-    u"(?:\.(?:[a-z\u00a1-\uffff]{2,}))"
-    u")"
-    # port number
-    u"(?::\d{2,5})?"
-    # resource path
-    u"(?:/[-a-z\u00a1-\uffff0-9._~%!$&'()*+,;=:@/]*)?"
-    # query string
-    u"(?:\?\S*)?"
-    # fragment
-    u"(?:#\S*)?"
-    u"$",
-    re.UNICODE | re.IGNORECASE
-)
-
-url_pattern = re.compile(url_regex)
-
-def is_valid_url(value, public = False):
-    result = url_pattern.match(value)
-    if not public:
-        return result
-
-    return result and not any(
-        (result.groupdict().get(key) for key in ('private_ip', 'private_host'))
-    )
-
-    # The MIT License (MIT)
-
-    # Copyright (c) 2013-2014 Konsta Vesterinen
-
-    # Permission is hereby granted, free of charge, to any person obtaining a copy of
-    # this software and associated documentation files (the "Software"), to deal in
-    # the Software without restriction, including without limitation the rights to
-    # use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-    # the Software, and to permit persons to whom the Software is furnished to do so,
-    # subject to the following conditions:
-
-    # The above copyright notice and this permission notice shall be included in all
-    # copies or substantial portions of the Software.
-
-    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-    # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-    # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-    # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-    # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-    # SOURCE REPOSITORY: https://github.com/kvesteri/validators
-
-import re
-
-ip_middle_octet = u"(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5]))"
-ip_last_octet = u"(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))"
-
-url_regex = re.compile(
-    u"^"
-    # protocol identifier
-    u"(?:(?:https?|ftp)://)"
-    # user:pass authentication
-    u"(?:[-a-z\u00a1-\uffff0-9._~%!$&'()*+,;=:]+"
-    u"(?::[-a-z0-9._~%!$&'()*+,;=:]*)?@)?"
-    u"(?:"
-    u"(?P<private_ip>"
-    # IP address exclusion
-    # private & local networks
-    u"(?:(?:10|127)" + ip_middle_octet + u"{2}" + ip_last_octet + u")|"
-    u"(?:(?:169\.254|192\.168)" + ip_middle_octet + ip_last_octet + u")|"
-    u"(?:172\.(?:1[6-9]|2\d|3[0-1])" + ip_middle_octet + ip_last_octet + u"))"
-    u"|"
-    # private & local hosts
-    u"(?P<private_host>"
-    u"(?:localhost))"
-    u"|"
-    # IP address dotted notation octets
-    # excludes loopback network 0.0.0.0
-    # excludes reserved space >= 224.0.0.0
-    # excludes network & broadcast addresses
-    # (first & last IP address of each class)
-    u"(?P<public_ip>"
-    u"(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])"
-    u"" + ip_middle_octet + u"{2}"
-    u"" + ip_last_octet + u")"
-    u"|"
-    # host name
-    u"(?:(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)"
-    # domain name
-    u"(?:\.(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)*"
-    # TLD identifier
-    u"(?:\.(?:[a-z\u00a1-\uffff]{2,}))"
-    u")"
-    # port number
-    u"(?::\d{2,5})?"
-    # resource path
-    u"(?:/[-a-z\u00a1-\uffff0-9._~%!$&'()*+,;=:@/]*)?"
-    # query string
-    u"(?:\?\S*)?"
-    # fragment
-    u"(?:#\S*)?"
-    u"$",
-    re.UNICODE | re.IGNORECASE
-)
-
-url_pattern = re.compile(url_regex)
-
-def is_valid_url(value, public = False):
-    result = url_pattern.match(value)
-    if not public:
-        return result
-
-    return result and not any(
-        (result.groupdict().get(key) for key in ('private_ip', 'private_host'))
-    )
+    def web(at):
+        if at.command[-1] == 'N': raise Exception(":(")
+        print("Hello from web", at.command)
+    def install(at): raise Exception("Not supposed to be here")
+    def install_local(at):
+        print("Hello from install_local", at.command)
+    def install_web(at):
+        print("Hello from install_web", at.command)
 
     # The MIT License (MIT)
 
@@ -321,46 +175,20 @@ def is_pathname_valid(pathname: str) -> bool: # https://stackoverflow.com/a/3410
         
 
 import os, sys, subprocess
-
-class mode_funcs(object):
-    def auto(at): raise Exception("Not supposed to be here")
-    def local(at):
-        path = at.command
-        path = path.replace('/', os.path.sep).replace('\\', os.path.sep)
-        
-        isdir = False
-        if path[-1] == os.path.sep: isdir = True
-        
-        if isdir: path += 'lnkpy-run.py'
-        
-        try:
-            subprocess.call([path] + sys.argv)
-            # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
-        except Exception as ex:
-            print("Couldn't open file {}".format(path), file=sys.stderr)
-            raise ex
-
-    def web(at):
-        if at.command[-1] == 'N': raise Exception(":(")
-        print("Hello from web", at.command)
-    def install(at): raise Exception("Not supposed to be here")
-    def install_local(at):
-        print("Hello from install_local", at.command)
-    def install_web(at):
-        print("Hello from install_web", at.command)
 class mode_initializators(object):
-    def auto(at, mode_lookup):
+    def auto(at):
         if (is_pathname_valid(at.command)):
             if not 'local' in mode_lookup: raise Exception("Auto mode found local path, but no handler for it exists!") 
-            at.mode = mode_lookup['local']
+            at.mode = at.mode_lookup['local']
         elif(is_valid_url(at.command)):
             if not 'web' in mode_lookup: raise Exception("Auto mode found web path, but no handler for it exists!") 
-            at.mode = mode_lookup['web']
+            at.mode = at.mode_lookup['web']
         else: raise Exception("Path \"{}\" is neither local nor web".format(at.command))
     
-    def install_auto(at, mode_lookup):
+    def install_auto(at):
         raise NotImplementedError()
         pass
+
 
 
 ########## parsing classes
@@ -385,6 +213,7 @@ class arg_tuple(object):
     def __init__(self, command, mode):
         self.command = command
         self.mode = mode
+        self.mode_lookup = mode_lookup
     def invoke(self):
         try:
             self.mode.func(self)
@@ -406,7 +235,7 @@ class mode(object):
             init_func = mode_inits_di[self.name]
             for a_tuple in args:
                 if a_tuple.mode == self:
-                    init_func(a_tuple, mode_lookup)
+                    init_func(a_tuple)
 
 mode_lookup = dict(map(lambda p: (p[0], mode(p[0], p[1])), mode_funcs_di.items()))
 args_t = []
