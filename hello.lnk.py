@@ -40,11 +40,11 @@ class mode_funcs(object):
 class mode_initializators(object):
     def auto(me, mode_lookup, arg):
         if (arg == 'some local path'):
-            if not 'local' in mode_lookup: raise Exception("Auto mode found local path, but not handler for it exists!") 
+            if not 'local' in mode_lookup: raise Exception("Auto mode found local path, but no handler for it exists!") 
             me.args.remove(arg)
             mode_lookup['local'].args.append(arg)
         elif(arg == 'some web path'):
-            if not 'web' in mode_lookup: raise Exception("Auto mode found web path, but not handler for it exists!") 
+            if not 'web' in mode_lookup: raise Exception("Auto mode found web path, but no handler for it exists!") 
             me.args.remove(arg)
             mode_lookup['web'].args.append(arg)
         else: raise Exception("Path \"{}\" is neither local nor web".format(arg))
