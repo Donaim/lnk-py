@@ -2,7 +2,8 @@
 
 TARGET_INFO='''
 README.md
-C:\\Windows\\system32\cmd.exe
+# C:\\Windows\\system32\cmd.exe
+C:\\Windows\\notepad.exe
 https://facebook.com
 C:\\
 # L::/.//blabla
@@ -35,6 +36,7 @@ https://google.com
 
 DEFAULT_MODE = 'auto'
 
+
 #include <modes.py>
 
 ########## parsing classes
@@ -60,6 +62,7 @@ class arg_tuple(object):
         self.command = command
         self.mode = mode
         self.mode_lookup = mode_lookup
+        self.args_t = args_t
     def invoke(self):
         try:
             self.mode.func(self)
@@ -71,8 +74,8 @@ class mode(object):
     def __init__(self, name, func):
         self.name = name
         self.func = func
-    def invoke_all(self, args):
-        for a_tuple in args:
+    def invoke_all(self):
+        for a_tuple in args_t:
             if a_tuple.mode == self: 
                 if a_tuple.invoke(): return True
         return False
