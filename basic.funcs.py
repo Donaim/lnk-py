@@ -19,7 +19,7 @@ def local(at):
     if isdir: path += 'lnkpy-run.py'
     
     try:
-        subprocess.check_call([path] + sys.argv, shell=True)
+        subprocess.check_call([path] + sys.argv[1:], shell=True)
         # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
     except Exception as ex:
         print("Couldn't open file {}".format(path), file=sys.stderr)
