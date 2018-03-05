@@ -10,23 +10,19 @@ https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 # second non-emty non-comment line is defined to be the beginning of TARGET_INFO string
 
 
-        #########
-       ## MODES ##
-        #########
+        ########
+       ## TAGS ##
+        ########
 
-DEFAULT_MODE = 'auto'
+DEFAULT_TAG = 'auto'
 
-class mode_funcs(object):
-    #include <mode_funcs.py>
-class mode_initializators(object):
-    #include <mode_initializators.py>
+class tag_funcs(object):
+    #include <tag_funcs.py>
+    pass
 
-########## parsing classes
-mode_funcs_static = filter(lambda name: name[0] != '_', dir(mode_funcs))
-mode_funcs_di = dict(map(lambda name: (name, getattr(mode_funcs, name)), mode_funcs_static))
-
-mode_inits_static = filter(lambda name: name[0] != '_', dir(mode_initializators))
-mode_inits_di = dict(map(lambda name: (name, getattr(mode_initializators, name)), mode_inits_static))
+# parsing tag_fucs
+tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
+tag_funcs_di = dict(map(lambda name: (name, getattr(tag_funcs, name)), tag_funcs_static))
 
         ###########
        ## PARSING ##
@@ -40,51 +36,60 @@ filtered  = filter(lambda line: len(line) > 0 and not line.isspace() and line[0]
 import sys
 # for stderr
 
-class arg_tuple(object):
-    def __init__(self, command, mode):
-        self.command = command
-        self.mode = mode
-        self.mode_lookup = mode_lookup
-        self.args_t = args_t
-    def invoke(self):
-        try:
-            self.mode.func(self)
-            return True
-        except Exception as ex:
-            print(ex, file=sys.stderr)
-            return False
-class mode(object):
+class arg(object):
+    def __init__(self, group_tag):
+        self.command = None
+        self.tags = [group_tag]
+        self.tags_dict = tags_dict
+        self.args = args
+    def invoke_tags(self):
+        for t in self.tags:
+            if t.invoke(self): return True
+        return False
+class tag(object):
     def __init__(self, name, func):
         self.name = name
         self.func = func
-    def invoke_all(self):
-        for a_tuple in args_t:
-            if a_tuple.mode == self: 
-                if a_tuple.invoke(): return True
-        return False
-    def init(self, args):
-        if self.name in mode_inits_di:
-            init_func = mode_inits_di[self.name]
-            for a_tuple in args:
-                if a_tuple.mode == self:
-                    init_func(a_tuple)
+    def invoke(a):
+        try:
+            self.func(a)
+            return True
+        except ImportError: return False
+        except Exception as ex:
+            print(ex, file=sys.stderr)
+            return False
 
-mode_lookup = dict(map(lambda p: (p[0], mode(p[0], p[1])), mode_funcs_di.items()))
-args_t = []
+tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
+args = []
+
+def tag_by_name(tname, default: tag):
+    if tname in tags_dict: return tags_dict[tname]
+    else: raise Exception("unknown tag: {}".format(tname))
+
+def is_tag(line): return line[0] == '$'
+def is_group_tag(line): is_tag(line) and line[-1] == '$'
+def next_group_tag(line, curr):
+    tname = line[1:-1]
+    return tag_by_name(tname, curr)
+
+def parse_tags(a: arg, line, curr):
+    sp = line[1:].split('$')
+    a.command = "$".join(sp[1:])
+    for tname in sp[0].split():
+        a.tags.append(tag_by_name(tname, curr))
 
 def parse_args(lines):
-    curr = mode_lookup[DEFAULT_MODE]
+    curr = tags_dict[DEFAULT_TAG]
     for line in lines:
-        if line[0] == '$':
-            mname = line[1:].strip()
-            if mname in mode_lookup:
-                curr = mode_lookup[mname]
-                continue
-            # else: raise Exception("unknown mode name: {}".format(mname))
-        args_t.append( arg_tuple(line, curr) )
+        if is_group_tag(line):
+            curr = next_group_tag(line, curr)
+        else:
+            a = arg(curr)
+            if is_tag(line): parse_tags(a, line, curr)
+            else: a.command = line
+            args.append(a)
+
 parse_args(filtered)
 
-for (name, m) in mode_lookup.items():
-    m.init(args_t)
-for t in args_t:
-    if t.invoke(): break
+for a in args:
+    if a.invoke_tags(): break
