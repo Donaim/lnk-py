@@ -8,7 +8,7 @@ def git(at):
     file = mode_funcs._format_path(first_local_at.command)
 
     try:
-        subprocess.call(["git", "clone"] + [repository] + [os.path.dirname(file)])
+        subprocess.check_call(["git", "clone"] + [repository] + [os.path.dirname(file)])
         # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
     except Exception as ex:
         print("Couldn't download git repository {}".format(repository), file=sys.stderr)

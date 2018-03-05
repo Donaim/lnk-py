@@ -31,17 +31,15 @@ class mode_funcs(object):
         else: return path
     
     def local(at):
-        path = at.command
-        path = mode_funcs._format_path(path)
+        path = mode_funcs._format_path(at.command)
         
-        isdir = False
-        if path[-1] == os.path.sep: isdir = True
-        
+        isdir = True if path[-1] == os.path.sep else False
         if isdir: path += 'lnkpy-run.py'
         
+        if not os.path.exists(path): raise Exception("local path \"{}\" does not exist!".format(path))
+        
         try:
-            subprocess.check_call([path] + sys.argv[1:], shell=True)
-            # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
+            subprocess.call([path] + sys.argv[1:], shell=True)
         except Exception as ex:
             print("Couldn't open file {}".format(path), file=sys.stderr)
             raise ex
@@ -94,7 +92,7 @@ class mode_funcs(object):
         file = mode_funcs._format_path(first_local_at.command)
     
         try:
-            subprocess.call(["git", "clone"] + [repository] + [os.path.dirname(file)])
+            subprocess.check_call(["git", "clone"] + [repository] + [os.path.dirname(file)])
             # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
         except Exception as ex:
             print("Couldn't download git repository {}".format(repository), file=sys.stderr)
