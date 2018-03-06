@@ -1,8 +1,8 @@
-import urllib.request
-import os
-import subprocess
 import re
+import os
 import sys
+import subprocess
+import urllib.request
 
 
 TARGET_INFO='''
@@ -140,6 +140,8 @@ class tag_funcs(object):
             except: raise Exception("Auto mode found web path, but no handler for it exists!") 
         else: raise Exception("Path \"{}\" is neither local nor web".format(a.command))
         raise ImportError
+
+    
     
     def _format_path(path):
         path = path.replace('/', os.path.sep).replace('\\', os.path.sep)
