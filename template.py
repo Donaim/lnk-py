@@ -34,7 +34,7 @@ class tag(object):
     def by_name(name):
         if name in tags_dict: return tags_dict[name]
         elif name[0] == '-': return tag(name, None) # pure tag
-        else: raise Exception("tag [{}] doesn't have handler!".format(name)) #  (if you wanted to have tag without handler, name it with like '-mytag')
+        else: raise Exception("tag [{}] doesn't have handler!".format(name)) 
 def parse_args():
     def is_tag(line: str) -> bool: 
         return line.lstrip()[0] == '$'
