@@ -34,7 +34,7 @@ def web(a):
         except: pass
         return re
 
-    target_at = tag_funcs._get_first_local(a.args)
+    target_at = tag_funcs._get_first_local(args_list)
     file_name = target_at.command
     file_name = tag_funcs._format_path(file_name)
     di = os.path.dirname(file_name)

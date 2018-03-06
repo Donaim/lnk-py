@@ -1,6 +1,7 @@
-
-$ -windows  ,  local
 ~/Desktop/Probf/primitive.py
-$git
 https://github.com/Donaim/ProblemFlawiusza.git
 $[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+$ -windows  ,  local
+
+# jest tutaj miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
+# second non-emty non-comment line is defined to be the beginning of TARGET_INFO string

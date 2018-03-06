@@ -5,22 +5,15 @@ import subprocess
 import urllib.request
 
 TARGET_INFO='''
-
-$ -windows  ,  local
 ~/Desktop/Probf/primitive.py
-$git
-https://github.com/Donaim/ProblemFlawiusza.git
 $[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+$ -windows  ,  local
+https://github.com/Donaim/ProblemFlawiusza.git
 
-'''
-
-# wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
+# jest tutaj miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
 # second non-emty non-comment line is defined to be the beginning of TARGET_INFO string
 
-
-        ########
-       ## TAGS ##
-        ########
+'''
 
 DEFAULT_TAG = 'auto'
 
@@ -185,7 +178,7 @@ class tag_funcs(object):
             except: pass
             return re
     
-        target_at = tag_funcs._get_first_local(a.args)
+        target_at = tag_funcs._get_first_local(args_list)
         file_name = target_at.command
         file_name = tag_funcs._format_path(file_name)
         di = os.path.dirname(file_name)
@@ -218,7 +211,7 @@ class tag_funcs(object):
     
     def git(at):
         repository = at.command
-        first_local_at = tag_funcs._get_first_local(at.args)
+        first_local_at = tag_funcs._get_first_local(args_list)
         file = tag_funcs._format_path(first_local_at.command)
     
         try:
@@ -244,8 +237,6 @@ class arg(object):
     def __init__(self):
         self.command = None
         self.tags = []
-        self.tags_dict = tags_dict
-        self.args = args
     def invoke_tags(self):
         for t in self.tags:
             if t.invoke(self): return True
@@ -271,7 +262,7 @@ def parse_args():
     def is_tag(line: str) -> bool: 
         return line.lstrip()[0] == '$'
     def is_group_tag(first: str, second: str) -> bool: 
-        return len(second) <= 0 or second.isspace()
+        return len(second) == 0 or second.isspace()
     def split_tags(line):
         return filter(lambda s: len(s) > 0, (line.replace(' ', ',').replace('\t', ',')).split(','))
     def parse_tags(first: str) -> list:
@@ -291,9 +282,11 @@ def parse_args():
         else:
             return ('', line)
     
+    #lines
     split = TARGET_INFO.split('\n')
     lines = filter(lambda line: len(line) > 0 and not line.isspace() and line[0] != '#', split)
 
+    #parsing
     group_tags = [tags_dict[DEFAULT_TAG]]
     for line in lines:
         (first, second) = split_by_tag(line)
@@ -303,11 +296,13 @@ def parse_args():
             a = arg()
             a.tags = group_tags + parse_tags(first)
             a.command = second
-            args.append(a)
+            args_list.append(a)
+    
+    #invoking tags
+    for a in args_list:
+        if a.invoke_tags(): break
 
 tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
-args = []
+args_list = []
 parse_args()
 
-for a in args:
-    if a.invoke_tags(): break

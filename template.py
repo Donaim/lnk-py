@@ -2,14 +2,6 @@ TARGET_INFO='''
 #include <target_info.txt>
 '''
 
-# wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
-# second non-emty non-comment line is defined to be the beginning of TARGET_INFO string
-
-
-        ########
-       ## TAGS ##
-        ########
-
 DEFAULT_TAG = 'auto'
 
 class tag_funcs(object):
@@ -20,15 +12,13 @@ class tag_funcs(object):
 tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
 tag_funcs_di = dict(map(lambda name: (name, getattr(tag_funcs, name)), tag_funcs_static))
 
-import sys
 # for stderr
+import sys
 
 class arg(object):
     def __init__(self):
         self.command = None
         self.tags = []
-        self.tags_dict = tags_dict
-        self.args = args
     def invoke_tags(self):
         for t in self.tags:
             if t.invoke(self): return True
@@ -74,9 +64,11 @@ def parse_args():
         else:
             return ('', line)
     
+    #lines
     split = TARGET_INFO.split('\n')
     lines = filter(lambda line: len(line) > 0 and not line.isspace() and line[0] != '#', split)
 
+    #parsing
     group_tags = [tags_dict[DEFAULT_TAG]]
     for line in lines:
         (first, second) = split_by_tag(line)
@@ -86,11 +78,13 @@ def parse_args():
             a = arg()
             a.tags = group_tags + parse_tags(first)
             a.command = second
-            args.append(a)
+            args_list.append(a)
+    
+    #invoking tags
+    for a in args_list:
+        if a.invoke_tags(): break
 
 tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
-args = []
+args_list = []
 parse_args()
 
-for a in args:
-    if a.invoke_tags(): break
