@@ -1,16 +1,20 @@
 
-#include <url_regex.py>
-#include <is_pathname_valid.py>
+#include <helpers/url_regex.py>
+#include <helpers/is_pathname_valid.py>
 
-def auto(at):
-    if (mode_initializators._is_pathname_valid(at.command)):
-        if not 'local' in mode_lookup: raise Exception("Auto mode found local path, but no handler for it exists!") 
-        at.mode = at.mode_lookup['local']
-    elif(mode_initializators._is_valid_url(at.command)):
-        if(is_valid_git(at.command)):
-            if not 'git' in mode_lookup: raise Exception("Auto mode found web path, but no handler for it exists!") 
-            at.mode = at.mode_lookup['git']
+def _is_valid_git(url: str):
+    return url.endswith(".git")
+def auto(a):
+    if (tag_funcs._is_pathname_valid(a.command)):
+        # print('adding local')
+        try: a.tags.append(tag.by_name('local'))        
+        except: raise Exception("Auto mode found local path, but no handler for it exists!") 
+    elif(tag_funcs._is_valid_url(a.command)):
+        if(tag_funcs._is_valid_git(a.command)):
+            try: a.tags.append(tag.by_name('git'))
+            except: raise Exception("Auto mode found git repository, but no handler for it exists!") 
         else:
-            if not 'web' in mode_lookup: raise Exception("Auto mode found web path, but no handler for it exists!") 
-            at.mode = at.mode_lookup['web']
-    else: raise Exception("Path \"{}\" is neither local nor git".format(at.command))
+            try: a.tags.append(tag.by_name('web'))
+            except: raise Exception("Auto mode found web path, but no handler for it exists!") 
+    else: raise Exception("Path \"{}\" is neither local nor web".format(a.command))
+    raise ImportError

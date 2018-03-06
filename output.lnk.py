@@ -5,10 +5,11 @@ import subprocess
 import urllib.request
 
 
+
 TARGET_INFO='''
 ~/Desktop/Probf/primitive.py
-# https://github.com/Donaim/ProblemFlawiusza.git
-https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+https://github.com/Donaim/ProblemFlawiusza.git
+# https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 '''
 
 # wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
@@ -22,8 +23,12 @@ https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 DEFAULT_TAG = 'auto'
 
 class tag_funcs(object):
+    #py-included<tag_funcs.py>
     
+    # #include <tags/basic-auto.py>
+    #py-included<tags\git-auto.py>
     
+    #py-included<tags\helpers\url_regex.py>
         # The MIT License (MIT)
     
         # Copyright (c) 2013-2014 Konsta Vesterinen
@@ -109,6 +114,7 @@ class tag_funcs(object):
         return result and not any((result.groupdict().get(key) for key in ('private_ip', 'private_host')))
     
 
+    #py-included<tags\helpers\is_pathname_valid.py>
     
     def _is_pathname_valid(pathname: str) -> bool: # https://stackoverflow.com/a/34102855/7038168
         try:
@@ -130,17 +136,25 @@ class tag_funcs(object):
         except TypeError as exc: return False
         else: return True
     
+    def _is_valid_git(url: str):
+        return url.endswith(".git")
     def auto(a):
         if (tag_funcs._is_pathname_valid(a.command)):
             # print('adding local')
             try: a.tags.append(tag.by_name('local'))        
             except: raise Exception("Auto mode found local path, but no handler for it exists!") 
         elif(tag_funcs._is_valid_url(a.command)):
-            try: a.tags.append(tag.by_name('web'))
-            except: raise Exception("Auto mode found web path, but no handler for it exists!") 
+            if(tag_funcs._is_valid_git(a.command)):
+                try: a.tags.append(tag.by_name('git'))
+                except: raise Exception("Auto mode found git repository, but no handler for it exists!") 
+            else:
+                try: a.tags.append(tag.by_name('web'))
+                except: raise Exception("Auto mode found web path, but no handler for it exists!") 
         else: raise Exception("Path \"{}\" is neither local nor web".format(a.command))
         raise ImportError
 
+    
+    #py-included<tags\basic.py>
     
     
     def _format_path(path):
@@ -203,6 +217,24 @@ class tag_funcs(object):
         f.close()
     
         tag_funcs.local(target_at)
+    #py-included<tags\git.py>
+    
+    
+    def git(at):
+        repository = at.command
+        first_local_at = tag_funcs._get_first_local(at.args)
+        file = tag_funcs._format_path(first_local_at.command)
+    
+        try:
+            subprocess.check_call(["git", "clone"] + [repository] + [os.path.dirname(file)])
+        except Exception as ex:
+            print("Couldn't download git repository {}".format(repository), file=sys.stderr)
+            raise ex
+    
+        # after clonning - run
+        tag_funcs.local(first_local_at)
+        
+
 
 
 # parsing tag_fucs
