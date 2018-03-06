@@ -1,4 +1,6 @@
 def make_self_copy():
+    import shutil
+    import random
     selfpath = sys.argv[0]
     copy_dest = "~/Documents/pylnk/{}/{}".format(random.randint(1000, 9999), os.path.basename(selfpath))
     copy_dest = tag_funcs._format_path(copy_dest)
@@ -9,10 +11,6 @@ def make_self_copy():
 
 if target_argument.has_tag('-pylink'):
     import sys
-    import subprocess
-    import os
-    import shutil
-    import random
 
     selfpath = sys.argv[0]
     copy_dest = make_self_copy()
@@ -29,6 +27,8 @@ if target_argument.has_tag('-pylink'):
 
     target_argument.command = selfpath
 elif target_argument.has_tag('-symlink'):
+    import os
+    import sys
     selfpath = sys.argv[0]
     copy_dest = make_self_copy()
     os.remove(selfpath)
