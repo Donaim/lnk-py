@@ -2,7 +2,7 @@
 
 TARGET_INFO='''
 ~/Desktop/Probf/primitive.py
-https://github.com/Donaim/ProblemFlawiusza.git
+# https://github.com/Donaim/ProblemFlawiusza.git
 https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 '''
 
@@ -53,7 +53,7 @@ class tag(object):
         try:
             self.func(a)
             return True
-        except ImportError: return False
+        except ImportError: return False # ignoring those
         except Exception as ex:
             print(ex, file=sys.stderr)
             return False

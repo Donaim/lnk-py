@@ -7,8 +7,8 @@ import sys
 
 TARGET_INFO='''
 ~/Desktop/Probf/primitive.py
-https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 # https://github.com/Donaim/ProblemFlawiusza.git
+https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 '''
 
 # wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
@@ -132,6 +132,7 @@ class tag_funcs(object):
     
     def auto(a):
         if (tag_funcs._is_pathname_valid(a.command)):
+            # print('adding local')
             try: a.tags.append(tag.by_name('local'))        
             except: raise Exception("Auto mode found local path, but no handler for it exists!") 
         elif(tag_funcs._is_valid_url(a.command)):
@@ -142,8 +143,8 @@ class tag_funcs(object):
     
     def _format_path(path):
         path = path.replace('/', os.path.sep).replace('\\', os.path.sep)
-        if (path[0] == '~'): return os.path.expanduser('~') + path[1:]
-        else: return path
+        if (path[0] == '~'): path = os.path.expanduser('~') + path[1:]
+        return path
     
     def local(a):
         path = tag_funcs._format_path(a.command)
@@ -161,7 +162,8 @@ class tag_funcs(object):
     
     def _get_first_local(args):
         for a in args:
-            if 'local' in a.tags: return a 
+            if 'local' in map(lambda t: t.name, a.tags): return a
+        raise Exception("TARGET_INFO contains not local args!!")
     def web(a):
         def try_get_file_size(meta):
             re = 0.0
@@ -234,7 +236,7 @@ class tag(object):
         try:
             self.func(a)
             return True
-        except ImportError: return False
+        except ImportError: return False # ignoring those
         except Exception as ex:
             print(ex, file=sys.stderr)
             return False
