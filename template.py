@@ -2,8 +2,8 @@
 
 TARGET_INFO='''
 ~/Desktop/Probf/primitive.py
+https://github.com/Donaim/ProblemFlawiusza.git
 https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
-# https://github.com/Donaim/ProblemFlawiusza.git
 '''
 
 # wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
