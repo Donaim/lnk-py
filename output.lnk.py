@@ -6,9 +6,9 @@ import urllib.request
 
 TARGET_INFO='''
 ~/Desktop/Probf/primitive.py
+https://github.com/Donaim/ProblemFlawiusza.git
 $[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 $ -windows  ,  local
-https://github.com/Donaim/ProblemFlawiusza.git
 
 # jest tutaj miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
 # second non-emty non-comment line is defined to be the beginning of TARGET_INFO string
@@ -237,17 +237,12 @@ class arg(object):
     def __init__(self):
         self.command = None
         self.tags = []
-    def invoke_tags(self):
-        for t in self.tags:
-            if t.invoke(self): return True
-        return False
 class tag(object):
     def __init__(self, name, func):
         self.name = name
         self.func = func
     def invoke(self, a):
         try:
-            if self.func == None: raise ImportError
             self.func(a)
             return True
         except ImportError: return False # ignoring those
@@ -300,7 +295,9 @@ def parse_args():
     
     #invoking tags
     for a in args_list:
-        if a.invoke_tags(): break
+        for t in a.tags:
+            if t.func == None: continue # pure tag, do not invoke
+            if t.invoke(a): break
 
 tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
 args_list = []
