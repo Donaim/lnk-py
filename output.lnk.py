@@ -5,7 +5,7 @@ import subprocess
 import urllib.request
 
 TARGET_INFO='''
-~/Desktop/Probf/primitive.py
+$[-pylink] ~/Desktop/Probf/primitive.py
 https://github.com/Donaim/ProblemFlawiusza.git
 $[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 $ -windows  ,  local
@@ -237,6 +237,7 @@ class arg(object):
     def __init__(self):
         self.command = None
         self.tags = []
+    def has_tag(self, tname): return any(map(lambda t: t.name == tname, self.tags))
 class tag(object):
     def __init__(self, name, func):
         self.name = name
@@ -297,6 +298,7 @@ def parse_args():
     #invoking tags
     for a in args_list:
         for t in a.tags:
+            print(a.has_tag(t.name + '1'))
             if t.invoke(a): return      # if some tag succeded with args, end the program
 
 tags_dict = dict(map(lambda name: (name, tag(name, getattr(tag_funcs, name))), tag_funcs_static))

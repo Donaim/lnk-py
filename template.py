@@ -18,6 +18,7 @@ class arg(object):
     def __init__(self):
         self.command = None
         self.tags = []
+    def has_tag(self, tname): return any(map(lambda t: t.name == tname, self.tags))
 class tag(object):
     def __init__(self, name, func):
         self.name = name

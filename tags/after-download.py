@@ -1,2 +1,3 @@
 
-tag_funcs.local(target_argument)
+#include <after-download.checklinks.py>
+#include <after-download.basic.py>

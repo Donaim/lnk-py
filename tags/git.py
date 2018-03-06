@@ -2,8 +2,8 @@
 import os
 import subprocess
 
-def git(at):
-    repository = at.command
+def git(a):
+    repository = a.command
     target_argument = tag_funcs._get_first_local(args_list)
     target_file = tag_funcs._format_path(target_argument.command)
 
