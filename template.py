@@ -10,7 +10,6 @@ class tag_funcs(object):
 
 # parsing tag_fucs
 tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
-tag_funcs_di = dict(map(lambda name: (name, getattr(tag_funcs, name)), tag_funcs_static))
 
 # for stderr
 import sys
@@ -82,7 +81,7 @@ def parse_args():
             if t.func == None: continue # pure tag, do not invoke
             if t.invoke(a): return      # if some tag succeded with args, end the program
 
-tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
+tags_dict = dict(map(lambda name: (name, tag(name, getattr(tag_funcs, name))), tag_funcs_static))
 args_list = []
 parse_args()
 
