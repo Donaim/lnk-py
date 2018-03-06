@@ -6,7 +6,7 @@ import urllib.request
 
 TARGET_INFO='''
 
-
+$[[windows  ,  local
 ~/Desktop/Probf/primitive.py
 $git
 https://github.com/Donaim/ProblemFlawiusza.git
@@ -156,7 +156,7 @@ class tag_funcs(object):
     
     def _format_path(path):
         path = path.replace('/', os.path.sep).replace('\\', os.path.sep)
-        if (path[0] == '~'): path = os.path.expanduser('~') + path[1:]
+        if (path[0] == '~' and path[1] == os.path.sep): path = os.path.expanduser('~') + path[1:]
         return path
     
     def local(a):
@@ -275,30 +275,28 @@ class tag(object):
     def by_name(name):
         if name in tags_dict: return tags_dict[name]
         else: return tag(name, None)
-
-tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
-args = []
-
-def is_tag(line: str) -> bool: return line.lstrip()[0] == '$'
-def is_group_tag(first: str, second: str) -> bool: return len(second) <= 0 or second.isspace()
-def parse_tags(first: str) -> list:
-    if len(first) == 0: return []
-    return list(map(lambda tname: tag.by_name(tname), first.split(' \t,')))
-def find_tag_close(line: str) -> int:
-    for (i, c) in enumerate(line):
-        if c == ']': return i
-    return len(line)
-def split_by_tag(line: str) -> (str, str):
-    if is_tag(line):
-        line = line.lstrip()[1:] # skip first '$' char
-        close_index = find_tag_close(line)
-        first = line[:close_index].strip(' \t,[]')
-        second = line[close_index + 1:].lstrip()
-        return (first, second)
-    else:
-        return ('', line)
-
 def parse_args(lines):
+    def is_tag(line: str) -> bool: return line.lstrip()[0] == '$'
+    def is_group_tag(first: str, second: str) -> bool: return len(second) <= 0 or second.isspace()
+    def split_tags(line):
+        return filter(lambda s: len(s) > 0, (line.replace(' ', ',').replace('\t', ',')).split(','))
+    def parse_tags(first: str) -> list:
+        if len(first) == 0: return []
+        return list(map(lambda tname: tag.by_name(tname), split_tags(first)))
+    def find_tag_close(line: str) -> int:
+        for (i, c) in enumerate(line):
+            if c == ']': return i
+        return len(line)
+    def split_by_tag(line: str) -> (str, str):
+        if is_tag(line):
+            line = line.lstrip()[1:] # skip first '$' char
+            close_index = find_tag_close(line)
+            first = line[:close_index].strip(' \t,[]')
+            second = line[close_index + 1:].lstrip()
+            return (first, second)
+        else:
+            return ('', line)
+    
     group_tags = [tags_dict[DEFAULT_TAG]]
     for line in lines:
         (first, second) = split_by_tag(line)
@@ -310,6 +308,8 @@ def parse_args(lines):
             a.command = second
             args.append(a)
 
+tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
+args = []
 parse_args(filtered)
 
 for a in args:

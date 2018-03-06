@@ -1,5 +1,5 @@
 
-
+$windows  ,  local
 ~/Desktop/Probf/primitive.py
 $git
 https://github.com/Donaim/ProblemFlawiusza.git
