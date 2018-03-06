@@ -34,10 +34,10 @@ def web(a):
         except: pass
         return re
 
-    target_at = tag_funcs._get_first_local(args_list)
-    file_name = target_at.command
-    file_name = tag_funcs._format_path(file_name)
-    di = os.path.dirname(file_name)
+    target_argument = tag_funcs._get_first_local(args_list)
+    target_file = target_argument.command
+    target_file = tag_funcs._format_path(target_file)
+    di = os.path.dirname(target_file)
     if not os.path.isdir(di): os.mkdir(di)
 
     url = a.command
@@ -46,7 +46,7 @@ def web(a):
     meta = u.info()
     file_size = try_get_file_size(meta)
 
-    f = open(file_name, 'wb')
+    f = open(target_file, 'wb')
     file_size_dl = 0
     block_sz = 8192
     while True:
@@ -62,4 +62,4 @@ def web(a):
 
     f.close()
 
-    tag_funcs.local(target_at)
+    #include <after-download.py>

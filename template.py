@@ -64,15 +64,14 @@ def parse_args():
     lines = filter(lambda line: len(line) > 0 and not line.isspace() and line[0] != '#', split)
 
     #parsing
-    group_tags = []
+    group_tags = [tags_dict[DEFAULT_TAG]]
     for line in lines:
         (aleft, aright) = split_by_tag(line)
         if is_group_tag(aleft, aright):
             group_tags = parse_tags(aleft)
         else:
             a = arg()
-            a.tags = group_tags + parse_tags(aleft)
-            if len(a.tags) == 0: a.tags = [tags_dict[DEFAULT_TAG]]
+            a.tags = parse_tags(aleft) + group_tags
             a.command = aright
             args_list.append(a)
     

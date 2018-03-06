@@ -178,10 +178,10 @@ class tag_funcs(object):
             except: pass
             return re
     
-        target_at = tag_funcs._get_first_local(args_list)
-        file_name = target_at.command
-        file_name = tag_funcs._format_path(file_name)
-        di = os.path.dirname(file_name)
+        target_argument = tag_funcs._get_first_local(args_list)
+        target_file = target_argument.command
+        target_file = tag_funcs._format_path(target_file)
+        di = os.path.dirname(target_file)
         if not os.path.isdir(di): os.mkdir(di)
     
         url = a.command
@@ -190,7 +190,7 @@ class tag_funcs(object):
         meta = u.info()
         file_size = try_get_file_size(meta)
     
-        f = open(file_name, 'wb')
+        f = open(target_file, 'wb')
         file_size_dl = 0
         block_sz = 8192
         while True:
@@ -206,23 +206,24 @@ class tag_funcs(object):
     
         f.close()
     
-        tag_funcs.local(target_at)
+        
+        tag_funcs.local(target_argument)
+
     
     
     def git(at):
         repository = at.command
-        first_local_at = tag_funcs._get_first_local(args_list)
-        file = tag_funcs._format_path(first_local_at.command)
+        target_argument = tag_funcs._get_first_local(args_list)
+        target_file = tag_funcs._format_path(target_argument.command)
     
         try:
-            subprocess.check_call(["git", "clone"] + [repository] + [os.path.dirname(file)])
+            subprocess.check_call(["git", "clone"] + [repository] + [os.path.dirname(target_file)])
         except Exception as ex:
             print("Couldn't download git repository {}".format(repository), file=sys.stderr)
             raise ex
     
-        # after clonning - run
-        tag_funcs.local(first_local_at)
         
+        tag_funcs.local(target_argument)
 
 
     pass
@@ -282,15 +283,14 @@ def parse_args():
     lines = filter(lambda line: len(line) > 0 and not line.isspace() and line[0] != '#', split)
 
     #parsing
-    group_tags = []
+    group_tags = [tags_dict[DEFAULT_TAG]]
     for line in lines:
         (aleft, aright) = split_by_tag(line)
         if is_group_tag(aleft, aright):
             group_tags = parse_tags(aleft)
         else:
             a = arg()
-            a.tags = group_tags + parse_tags(aleft)
-            if len(a.tags) == 0: a.tags = [tags_dict[DEFAULT_TAG]]
+            a.tags = parse_tags(aleft) + group_tags
             a.command = aright
             args_list.append(a)
     
