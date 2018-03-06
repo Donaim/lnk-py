@@ -4,110 +4,17 @@ https://raw.githubusercontent.com/Donaim/pyincluder/master/pyincluder.py
 https://github.com/Donaim/pyincluder.git
 '''
 
-# wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
-# second non-emty non-comment line is defined to be the beginning of TARGET_INFO string
-
-import urllib.request
-import os
-import subprocess
 import re
+import os
 import sys
+import subprocess
+import urllib.request
 
+DEFAULT_TAG = 'auto'
 
-        #########
-       ## MODES ##
-        #########
-
-DEFAULT_MODE = 'auto'
-
-class mode_funcs(object):
+class tag_funcs(object):
     
-    
-    def auto(at): raise Exception("Not supposed to be here")
-    def _format_path(path):
-        path = path.replace('/', os.path.sep).replace('\\', os.path.sep)
-        if (path[0] == '~'): return os.path.expanduser('~') + path[1:]
-        else: return path
-    
-    def local(at):
-        path = at.command
-        path = mode_funcs._format_path(path)
-        
-        isdir = False
-        if path[-1] == os.path.sep: isdir = True
-        
-        if isdir: path += 'lnkpy-run.py'
-        
-        try:
-            subprocess.check_call([path] + sys.argv[1:], shell=True)
-            # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
-        except Exception as ex:
-            print("Couldn't open file {}".format(path), file=sys.stderr)
-            raise ex
-    
-    def _get_first_local(args_t):
-        for a in args_t:
-            if a.mode.name == 'local': return a 
-    def web(at):
-        def try_get_file_size(meta):
-            re = 0.0
-            try:
-                re = int(meta.get("Content-Length"))
-            except: pass
-            return re
-    
-        target_at = mode_funcs._get_first_local(at.args_t)
-        file_name = target_at.command
-        file_name = mode_funcs._format_path(file_name)
-        di = os.path.dirname(file_name)
-        if not os.path.isdir(di): os.mkdir(di)
-    
-        url = at.command
-        u = urllib.request.urlopen(url)
-    
-        meta = u.info()
-        file_size = try_get_file_size(meta)
-    
-        f = open(file_name, 'wb')
-        file_size_dl = 0
-        block_sz = 8192
-        while True:
-            buffer = u.read(block_sz)
-            if not buffer: break
-    
-            file_size_dl += len(buffer)
-            f.write(buffer)
-       
-            status = "downloading.. {:10d}b".format(file_size_dl)
-            if file_size > 0: status += " ({:3.2f} %)".format(file_size_dl * 100. / file_size)
-            print(status)
-    
-        f.close()
-    
-        mode_funcs.local(target_at)
-    
-    
-    def git(at):
-        def get_first_local():
-            for a in at.args_t:
-                if a.mode.name == 'local': return a 
-    
-        repository = at.command
-        first_local_at = get_first_local()
-    
-        try:
-            subprocess.call(["git", "clone"] + [repository] + [os.path.dirname(first_local_at.command)])
-            # subprocess.Popen([path] + sys.argv[1:], shell=True, stdin=None, stdout=None, stderr=None, close_fds=False)
-        except Exception as ex:
-            print("Couldn't download git repository {}".format(repository), file=sys.stderr)
-            raise ex
-    
-        # after clonning - run
-        first_local_at.invoke()
-        
-
-
-class mode_initializators(object):
+    # #include <tags/basic-auto.py>
     
         # The MIT License (MIT)
     
@@ -187,7 +94,7 @@ class mode_initializators(object):
     url_pattern = re.compile(url_regex)
     
     def _is_valid_url(value, public = False):
-        result = mode_initializators.url_pattern.match(value)
+        result = tag_funcs.url_pattern.match(value)
         if not public:
             return result
     
@@ -215,85 +122,181 @@ class mode_initializators(object):
         except TypeError as exc: return False
         else: return True
     
-    def auto(at):
-        def is_valid_git(string):
-            return (string.startswith("https://") or string.startswith("http://")) and string.endswith(".git")
-        if (mode_initializators._is_pathname_valid(at.command)):
-            if not 'local' in mode_lookup: raise Exception("Auto mode found local path, but no handler for it exists!") 
-            at.mode = at.mode_lookup['local']
-        elif(mode_initializators._is_valid_url(at.command)):
-            if(is_valid_git(at.command)):
-                if not 'git' in mode_lookup: raise Exception("Auto mode found web path, but no handler for it exists!") 
-                at.mode = at.mode_lookup['git']
+    def _is_valid_git(url: str):
+        return url.endswith(".git")
+    def auto(a):
+        if (tag_funcs._is_pathname_valid(a.command)):
+            # print('adding local')
+            try: a.tags.append(tag.by_name('local'))        
+            except: raise Exception("Auto mode found local path, but no handler for it exists!") 
+        elif(tag_funcs._is_valid_url(a.command)):
+            if(tag_funcs._is_valid_git(a.command)):
+                try: a.tags.append(tag.by_name('git'))
+                except: raise Exception("Auto mode found git repository, but no handler for it exists!") 
             else:
-                if not 'web' in mode_lookup: raise Exception("Auto mode found web path, but no handler for it exists!") 
-                at.mode = at.mode_lookup['web']
-        else: raise Exception("Path \"{}\" is neither local nor git".format(at.command))
+                try: a.tags.append(tag.by_name('web'))
+                except: raise Exception("Auto mode found web path, but no handler for it exists!") 
+        else: raise Exception("Path \"{}\" is neither local nor web".format(a.command))
+        raise ImportError
+
+    
+    
+    
+    def _format_path(path):
+        path = path.replace('/', os.path.sep).replace('\\', os.path.sep)
+        if (path[0] == '~' and path[1] == os.path.sep): path = os.path.expanduser('~') + path[1:]
+        return path
+    
+    def local(a):
+        path = tag_funcs._format_path(a.command)
+        
+        isdir = True if path[-1] == os.path.sep else False
+        if isdir: path += 'lnkpy-run.py'
+        
+        if not os.path.exists(path): raise Exception("local path \"{}\" does not exist!".format(path))
+        
+        try:
+            subprocess.call([path] + sys.argv[1:], shell=True)
+        except Exception as ex:
+            print("Couldn't open file {}".format(path), file=sys.stderr)
+            raise ex
+    
+    def _get_first_local(args):
+        for a in args:
+            if 'local' in map(lambda t: t.name, a.tags): return a
+        raise Exception("TARGET_INFO contains not local args!!")
+    def web(a):
+        def try_get_file_size(meta):
+            re = 0.0
+            try:
+                re = int(meta.get("Content-Length"))
+            except: pass
+            return re
+    
+        target_argument = tag_funcs._get_first_local(args_list)
+        target_file = target_argument.command
+        target_file = tag_funcs._format_path(target_file)
+        di = os.path.dirname(target_file)
+        if not os.path.isdir(di): os.mkdir(di)
+    
+        url = a.command
+        u = urllib.request.urlopen(url)
+    
+        meta = u.info()
+        file_size = try_get_file_size(meta)
+    
+        f = open(target_file, 'wb')
+        file_size_dl = 0
+        block_sz = 8192
+        while True:
+            buffer = u.read(block_sz)
+            if not buffer: break
+    
+            file_size_dl += len(buffer)
+            f.write(buffer)
+       
+            status = "downloading.. {:10d}b".format(file_size_dl)
+            if file_size > 0: status += " ({:3.2f} %)".format(file_size_dl * 100. / file_size)
+            print(status)
+    
+        f.close()
+    
+        
+        tag_funcs.local(target_argument)
+
+    
+    
+    def git(at):
+        repository = at.command
+        target_argument = tag_funcs._get_first_local(args_list)
+        target_file = tag_funcs._format_path(target_argument.command)
+    
+        try:
+            subprocess.check_call(["git", "clone"] + [repository] + [os.path.dirname(target_file)])
+        except Exception as ex:
+            print("Couldn't download git repository {}".format(repository), file=sys.stderr)
+            raise ex
+    
+        
+        tag_funcs.local(target_argument)
 
 
-########## parsing classes
-mode_funcs_static = filter(lambda name: name[0] != '_', dir(mode_funcs))
-mode_funcs_di = dict(map(lambda name: (name, getattr(mode_funcs, name)), mode_funcs_static))
+    pass
 
-mode_inits_static = filter(lambda name: name[0] != '_', dir(mode_initializators))
-mode_inits_di = dict(map(lambda name: (name, getattr(mode_initializators, name)), mode_inits_static))
-
-        ###########
-       ## PARSING ##
-        ###########
-
-split = TARGET_INFO.split('\n')
-filtered  = filter(lambda line: len(line) > 0 and not line.isspace() and line[0] != '#', split)
-
-# filtered contains non-empty non-comment lines from TARGET_INFO
+# parsing tag_fucs
+tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
 
 # for stderr
 
-class arg_tuple(object):
-    def __init__(self, command, mode):
-        self.command = command
-        self.mode = mode
-        self.mode_lookup = mode_lookup
-        self.args_t = args_t
-    def invoke(self):
-        try:
-            self.mode.func(self)
-            return True
-        except Exception as ex:
-            print(ex, file=sys.stderr)
-            return False
-class mode(object):
+class arg(object):
+    def __init__(self):
+        self.command = None
+        self.tags = []
+    def has_tag(self, tname): return any(map(lambda t: t.name == tname, self.tags))
+class tag(object):
     def __init__(self, name, func):
         self.name = name
         self.func = func
-    def invoke_all(self):
-        for a_tuple in args_t:
-            if a_tuple.mode == self: 
-                if a_tuple.invoke(): return True
-        return False
-    def init(self, args):
-        if self.name in mode_inits_di:
-            init_func = mode_inits_di[self.name]
-            for a_tuple in args:
-                if a_tuple.mode == self:
-                    init_func(a_tuple)
+    def invoke(self, a):
+        try:
+            if self.func == None: return False # pure tag, do not invoke
+            self.func(a)
+            return True
+        except ImportError: return False # ignoring those
+        except Exception as ex:
+            print(ex, file=sys.stderr)
+            return False
+    def by_name(name):
+        if name in tags_dict: return tags_dict[name]
+        elif name[0] == '-': return tag(name, None) # pure tag
+        else: raise Exception("tag [{}] doesn't have handler!".format(name)) 
+def parse_args():
+    def is_tag(line: str) -> bool: 
+        return line.lstrip()[0] == '$'
+    def is_group_tag(aleft: str, aright: str) -> bool: 
+        return len(aright) == 0 or aright.isspace()
+    def split_tags(line):
+        return filter(lambda s: len(s) > 0, (line.replace(' ', ',').replace('\t', ',')).split(','))
+    def parse_tags(aleft: str) -> list:
+        if len(aleft) == 0: return []
+        return list(map(lambda tname: tag.by_name(tname), split_tags(aleft)))
+    def find_tag_close(line: str) -> int:
+        for (i, c) in enumerate(line):
+            if c == ']': return i
+        return len(line)
+    def split_by_tag(line: str) -> (str, str):
+        if is_tag(line):
+            line = line.lstrip()[1:] # skip aleft '$' char
+            close_index = find_tag_close(line)
+            aleft = line[:close_index].strip(' \t,[]')
+            aright = line[close_index + 1:].lstrip()
+            return (aleft, aright)
+        else:
+            return ('', line)
+    
+    #lines
+    split = TARGET_INFO.split('\n')
+    lines = filter(lambda line: len(line) > 0 and not line.isspace() and line[0] != '#', split)
 
-mode_lookup = dict(map(lambda p: (p[0], mode(p[0], p[1])), mode_funcs_di.items()))
-args_t = []
-
-def parse_args(lines):
-    curr = mode_lookup[DEFAULT_MODE]
+    #parsing
+    group_tags = [tags_dict[DEFAULT_TAG]]
     for line in lines:
-        if line[0] == '$':
-            mname = line[1:].strip()
-            if mname in mode_lookup:
-                curr = mode_lookup[mname]
-                continue
-            # else: raise Exception("unknown mode name: {}".format(mname))
-        args_t.append( arg_tuple(line, curr) )
-parse_args(filtered)
+        (aleft, aright) = split_by_tag(line)
+        if is_group_tag(aleft, aright):
+            group_tags = parse_tags(aleft)
+        else:
+            a = arg()
+            a.tags = parse_tags(aleft) + group_tags
+            a.command = aright
+            args_list.append(a)
+    
+    #invoking tags
+    for a in args_list:
+        for t in a.tags:
+            print(a.has_tag(t.name + '1'))
+            if t.invoke(a): return      # if some tag succeded with args, end the program
 
-for (name, m) in mode_lookup.items():
-    m.init(args_t)
-for t in args_t:
-    if t.invoke(): break
+tags_dict = dict(map(lambda name: (name, tag(name, getattr(tag_funcs, name))), tag_funcs_static))
+args_list = []
+parse_args()
+

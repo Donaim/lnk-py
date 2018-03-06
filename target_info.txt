@@ -1,6 +1,6 @@
 $[-pylink] ~/Desktop/Probf/primitive.py
-https://github.com/Donaim/ProblemFlawiusza.git
 $[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+# https://github.com/Donaim/ProblemFlawiusza.git
 $ -windows  ,  local
 
 # jest tutaj miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
