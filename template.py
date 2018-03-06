@@ -24,6 +24,7 @@ class tag(object):
         self.func = func
     def invoke(self, a):
         try:
+            if self.func == None: return False # pure tag, do not invoke
             self.func(a)
             return True
         except ImportError: return False # ignoring those
@@ -78,7 +79,6 @@ def parse_args():
     #invoking tags
     for a in args_list:
         for t in a.tags:
-            if t.func == None: continue # pure tag, do not invoke
             if t.invoke(a): return      # if some tag succeded with args, end the program
 
 tags_dict = dict(map(lambda name: (name, tag(name, getattr(tag_funcs, name))), tag_funcs_static))
