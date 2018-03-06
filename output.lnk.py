@@ -5,9 +5,12 @@ import subprocess
 import urllib.request
 
 TARGET_INFO='''
-~/Desktop/Probf/primitive.py
+
+
+$[windows] ~/Desktop/Probf/primitive.py
+$git
 https://github.com/Donaim/ProblemFlawiusza.git
-# https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+$[windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 
 '''
 
@@ -262,6 +265,7 @@ class tag(object):
         self.func = func
     def invoke(self, a):
         try:
+            if self.func == None: raise Exception("tag [{}] has no handler".format(self.name))
             self.func(a)
             return True
         except ImportError: return False # ignoring those
@@ -270,27 +274,27 @@ class tag(object):
             return False
     def by_name(name):
         if name in tags_dict: return tags_dict[name]
-        else: raise Exception("unknown tag: \"{}\"".format(name))
-        # else: return curr
+        else: return tag(name, None)
+        # else: raise Exception("unknown tag: \"{}\"".format(name))
 
 tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
 args = []
 
 def is_tag(line: str) -> bool: return line.lstrip()[0] == '$'
-def is_group_tag(first: str, second: str) -> bool: return len(second) == 0
+def is_group_tag(first: str, second: str) -> bool: return len(second) <= 0 or second.isspace()
 def parse_tags(first: str) -> list:
     if len(first) == 0: return []
     return list(map(lambda tname: tag.by_name(tname), first.split(' \t,')))
 def find_tag_close(line: str) -> int:
     for (i, c) in enumerate(line):
-        if c == '$': return i
-    return 0
+        if c == ']': return i
+    return len(line)
 def split_by_tag(line: str) -> (str, str):
     if is_tag(line):
         line = line.lstrip()[1:] # skip first '$' char
         close_index = find_tag_close(line)
-        first = line[:close_index].strip(' \t,')
-        second = line[close_index:].lstrip()
+        first = line[:close_index].strip(' \t,[]')
+        second = line[close_index + 1:].lstrip()
         return (first, second)
     else:
         return ('', line)
@@ -309,6 +313,6 @@ def parse_args(lines):
 
 parse_args(filtered)
 
-# for a in args: print('arg \"{}\" has tags={}'.format(a.command, list(map(lambda t: t.name, a.tags))))
+for a in args: print('arg \"{}\" has tags={}'.format(a.command, list(map(lambda t: t.name, a.tags))))
 for a in args:
     if a.invoke_tags(): break

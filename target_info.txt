@@ -1,5 +1,6 @@
 
 
-~/Desktop/Probf/primitive.py
+$[windows] ~/Desktop/Probf/primitive.py
+$git
 https://github.com/Donaim/ProblemFlawiusza.git
-# https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+$[windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
