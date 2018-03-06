@@ -1,20 +1,17 @@
-import re
-import os
-import sys
-import subprocess
-import urllib.request
-
-
-
 TARGET_INFO='''
 ~/Desktop/Probf/primitive.py
 https://github.com/Donaim/ProblemFlawiusza.git
-# https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 '''
 
 # wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
 # second non-emty non-comment line is defined to be the beginning of TARGET_INFO string
 
+import re
+import os
+import sys
+import subprocess
+import urllib.request
 
         ########
        ## TAGS ##
