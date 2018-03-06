@@ -77,7 +77,7 @@ url_regex = re.compile(
 url_pattern = re.compile(url_regex)
 
 def _is_valid_url(value, public = False):
-    result = mode_initializators.url_pattern.match(value)
+    result = tag_funcs.url_pattern.match(value)
     if not public:
         return result
 

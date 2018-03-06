@@ -3,14 +3,26 @@ import urllib.request
 import os
 import subprocess
 
-def auto(at): raise Exception("Not supposed to be here")
+#include <url_regex.py>
+#include <is_pathname_valid.py>
+
+def auto(a):
+    if (tag_funcs._is_pathname_valid(a.command)):
+        try: a.tags.append(tag.by_name('local'))        
+        except: raise Exception("Auto mode found local path, but no handler for it exists!") 
+    elif(tag_funcs._is_valid_url(a.command)):
+        try: a.tags.append(tag.by_name('web'))
+        except: raise Exception("Auto mode found web path, but no handler for it exists!") 
+    else: raise Exception("Path \"{}\" is neither local nor web".format(a.command))
+    raise ImportError
+
 def _format_path(path):
     path = path.replace('/', os.path.sep).replace('\\', os.path.sep)
     if (path[0] == '~'): return os.path.expanduser('~') + path[1:]
     else: return path
 
-def local(at):
-    path = mode_funcs._format_path(at.command)
+def local(a):
+    path = tag_funcs._format_path(a.command)
     
     isdir = True if path[-1] == os.path.sep else False
     if isdir: path += 'lnkpy-run.py'
@@ -23,10 +35,10 @@ def local(at):
         print("Couldn't open file {}".format(path), file=sys.stderr)
         raise ex
 
-def _get_first_local(args_t):
-    for a in args_t:
-        if a.mode.name == 'local': return a 
-def web(at):
+def _get_first_local(args):
+    for a in args:
+        if 'local' in a.tags: return a 
+def web(a):
     def try_get_file_size(meta):
         re = 0.0
         try:
@@ -34,13 +46,13 @@ def web(at):
         except: pass
         return re
 
-    target_at = mode_funcs._get_first_local(at.args_t)
+    target_at = tag_funcs._get_first_local(a.args)
     file_name = target_at.command
-    file_name = mode_funcs._format_path(file_name)
+    file_name = tag_funcs._format_path(file_name)
     di = os.path.dirname(file_name)
     if not os.path.isdir(di): os.mkdir(di)
 
-    url = at.command
+    url = a.command
     u = urllib.request.urlopen(url)
 
     meta = u.info()
@@ -62,4 +74,4 @@ def web(at):
 
     f.close()
 
-    mode_funcs.local(target_at)
+    tag_funcs.local(target_at)

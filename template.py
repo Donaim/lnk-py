@@ -18,7 +18,6 @@ DEFAULT_TAG = 'auto'
 
 class tag_funcs(object):
     #include <tag_funcs.py>
-    pass
 
 # parsing tag_fucs
 tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
@@ -50,7 +49,7 @@ class tag(object):
     def __init__(self, name, func):
         self.name = name
         self.func = func
-    def invoke(a):
+    def invoke(self, a):
         try:
             self.func(a)
             return True
@@ -58,31 +57,31 @@ class tag(object):
         except Exception as ex:
             print(ex, file=sys.stderr)
             return False
+    def by_name(name):
+        if name in tags_dict: return tags_dict[name]
+        else: raise Exception("unknown tag: {}".format(name))
+        # else: return curr
 
 tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
 args = []
 
-def tag_by_name(tname, default: tag):
-    if tname in tags_dict: return tags_dict[tname]
-    else: raise Exception("unknown tag: {}".format(tname))
-
 def is_tag(line): return line[0] == '$'
 def is_group_tag(line): is_tag(line) and line[-1] == '$'
-def next_group_tag(line, curr):
+def next_group_tag(line):
     tname = line[1:-1]
-    return tag_by_name(tname, curr)
+    return tag.by_name(tname)
 
 def parse_tags(a: arg, line, curr):
     sp = line[1:].split('$')
     a.command = "$".join(sp[1:])
     for tname in sp[0].split():
-        a.tags.append(tag_by_name(tname, curr))
+        a.tags.append(tag.by_name(tname))
 
 def parse_args(lines):
     curr = tags_dict[DEFAULT_TAG]
     for line in lines:
         if is_group_tag(line):
-            curr = next_group_tag(line, curr)
+            curr = next_group_tag(line)
         else:
             a = arg(curr)
             if is_tag(line): parse_tags(a, line, curr)
