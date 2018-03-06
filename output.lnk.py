@@ -4,12 +4,11 @@ import sys
 import subprocess
 import urllib.request
 
-
-
 TARGET_INFO='''
 ~/Desktop/Probf/primitive.py
 https://github.com/Donaim/ProblemFlawiusza.git
 # https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+
 '''
 
 # wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
@@ -23,12 +22,9 @@ https://github.com/Donaim/ProblemFlawiusza.git
 DEFAULT_TAG = 'auto'
 
 class tag_funcs(object):
-    #py-included<tag_funcs.py>
     
     # #include <tags/basic-auto.py>
-    #py-included<tags\git-auto.py>
     
-    #py-included<tags\helpers\url_regex.py>
         # The MIT License (MIT)
     
         # Copyright (c) 2013-2014 Konsta Vesterinen
@@ -114,7 +110,6 @@ class tag_funcs(object):
         return result and not any((result.groupdict().get(key) for key in ('private_ip', 'private_host')))
     
 
-    #py-included<tags\helpers\is_pathname_valid.py>
     
     def _is_pathname_valid(pathname: str) -> bool: # https://stackoverflow.com/a/34102855/7038168
         try:
@@ -154,7 +149,6 @@ class tag_funcs(object):
         raise ImportError
 
     
-    #py-included<tags\basic.py>
     
     
     def _format_path(path):
@@ -217,7 +211,6 @@ class tag_funcs(object):
         f.close()
     
         tag_funcs.local(target_at)
-    #py-included<tags\git.py>
     
     
     def git(at):
@@ -236,6 +229,7 @@ class tag_funcs(object):
         
 
 
+    pass
 
 # parsing tag_fucs
 tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
@@ -315,6 +309,6 @@ def parse_args(lines):
 
 parse_args(filtered)
 
-for a in args: print('arg \"{}\" has tags={}'.format(a.command, list(map(lambda t: t.name, a.tags))))
+# for a in args: print('arg \"{}\" has tags={}'.format(a.command, list(map(lambda t: t.name, a.tags))))
 for a in args:
     if a.invoke_tags(): break

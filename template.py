@@ -1,9 +1,5 @@
-
-
 TARGET_INFO='''
-~/Desktop/Probf/primitive.py
-https://github.com/Donaim/ProblemFlawiusza.git
-# https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+#include <target_info.txt>
 '''
 
 # wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
@@ -18,6 +14,7 @@ DEFAULT_TAG = 'auto'
 
 class tag_funcs(object):
     #include <tag_funcs.py>
+    pass
 
 # parsing tag_fucs
 tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
@@ -98,6 +95,6 @@ def parse_args(lines):
 
 parse_args(filtered)
 
-for a in args: print('arg \"{}\" has tags={}'.format(a.command, list(map(lambda t: t.name, a.tags))))
+# for a in args: print('arg \"{}\" has tags={}'.format(a.command, list(map(lambda t: t.name, a.tags))))
 for a in args:
     if a.invoke_tags(): break
