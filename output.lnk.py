@@ -6,11 +6,11 @@ import urllib.request
 
 TARGET_INFO='''
 
-$[[windows  ,  local
+$ -windows  ,  local
 ~/Desktop/Probf/primitive.py
 $git
 https://github.com/Donaim/ProblemFlawiusza.git
-$[windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+$[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 
 '''
 
@@ -238,15 +238,6 @@ class tag_funcs(object):
 tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
 tag_funcs_di = dict(map(lambda name: (name, getattr(tag_funcs, name)), tag_funcs_static))
 
-        ###########
-       ## PARSING ##
-        ###########
-
-split = TARGET_INFO.split('\n')
-filtered  = filter(lambda line: len(line) > 0 and not line.isspace() and line[0] != '#', split)
-
-# filtered contains non-empty non-comment lines from TARGET_INFO
-
 # for stderr
 
 class arg(object):
@@ -265,7 +256,7 @@ class tag(object):
         self.func = func
     def invoke(self, a):
         try:
-            if self.func == None: raise Exception("tag [{}] has no handler".format(self.name))
+            if self.func == None: raise ImportError
             self.func(a)
             return True
         except ImportError: return False # ignoring those
@@ -274,10 +265,13 @@ class tag(object):
             return False
     def by_name(name):
         if name in tags_dict: return tags_dict[name]
-        else: return tag(name, None)
-def parse_args(lines):
-    def is_tag(line: str) -> bool: return line.lstrip()[0] == '$'
-    def is_group_tag(first: str, second: str) -> bool: return len(second) <= 0 or second.isspace()
+        elif name[0] == '-': return tag(name, None) # pure tag
+        else: raise Exception("tag [{}] doesn't have handler!".format(name)) #  (if you wanted to have tag without handler, name it with like '-mytag')
+def parse_args():
+    def is_tag(line: str) -> bool: 
+        return line.lstrip()[0] == '$'
+    def is_group_tag(first: str, second: str) -> bool: 
+        return len(second) <= 0 or second.isspace()
     def split_tags(line):
         return filter(lambda s: len(s) > 0, (line.replace(' ', ',').replace('\t', ',')).split(','))
     def parse_tags(first: str) -> list:
@@ -297,6 +291,9 @@ def parse_args(lines):
         else:
             return ('', line)
     
+    split = TARGET_INFO.split('\n')
+    lines = filter(lambda line: len(line) > 0 and not line.isspace() and line[0] != '#', split)
+
     group_tags = [tags_dict[DEFAULT_TAG]]
     for line in lines:
         (first, second) = split_by_tag(line)
@@ -310,7 +307,7 @@ def parse_args(lines):
 
 tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
 args = []
-parse_args(filtered)
+parse_args()
 
 for a in args:
     if a.invoke_tags(): break

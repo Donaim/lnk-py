@@ -1,6 +1,6 @@
 
-$windows  ,  local
+$ -windows  ,  local
 ~/Desktop/Probf/primitive.py
 $git
 https://github.com/Donaim/ProblemFlawiusza.git
-$[windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+$[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
