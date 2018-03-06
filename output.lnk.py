@@ -7,7 +7,7 @@ import urllib.request
 TARGET_INFO='''
 
 
-$[windows] ~/Desktop/Probf/primitive.py
+~/Desktop/Probf/primitive.py
 $git
 https://github.com/Donaim/ProblemFlawiusza.git
 $[windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
@@ -275,7 +275,6 @@ class tag(object):
     def by_name(name):
         if name in tags_dict: return tags_dict[name]
         else: return tag(name, None)
-        # else: raise Exception("unknown tag: \"{}\"".format(name))
 
 tags_dict = dict(map(lambda p: (p[0], tag(p[0], p[1])), tag_funcs_di.items()))
 args = []
@@ -313,6 +312,5 @@ def parse_args(lines):
 
 parse_args(filtered)
 
-for a in args: print('arg \"{}\" has tags={}'.format(a.command, list(map(lambda t: t.name, a.tags))))
 for a in args:
     if a.invoke_tags(): break
