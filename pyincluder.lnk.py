@@ -1,7 +1,7 @@
 TARGET_INFO='''
 ~/Documents/dev/pyincluder/pyincluder.py
-# https://raw.githubusercontent.com/Donaim/pyincluder/master/pyincluder.py
-# https://github.com/Donaim/pyincluder.git
+https://raw.githubusercontent.com/Donaim/pyincluder/master/pyincluder.py
+https://github.com/Donaim/pyincluder.git
 '''
 
 # wyzej miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
