@@ -6,6 +6,8 @@ TARGET_INFO='''
 
 DEFAULT_TAG = 'auto'
 
+#label global
+
 class tag_funcs(object):
     #include <tag_funcs.py>
     pass

@@ -1,3 +1,4 @@
+#moveat global
 def make_self_copy():
     import shutil #pyincluder-ignore
     import random #pyincluder-ignore
@@ -8,32 +9,33 @@ def make_self_copy():
     if not os.path.exists(os.path.dirname(copy_dest)): os.makedirs(os.path.dirname(copy_dest))
     shutil.copy(selfpath, copy_dest)
     return copy_dest
+def check_links(target_argument, target_file):
+    if target_argument.has_tag('-pylink'):
+        selfpath = sys.argv[0]
+        copy_dest = make_self_copy()
 
-if target_argument.has_tag('-pylink'):
-    import sys
+        template='''import os
+try: 
+    if os.path.exists("$target$"): os.system("$target$")
+    else: raise Exception()
+except: os.system("$fail$")
+        '''
+        template = template.replace('$target$', target_file.replace('\\', '\\\\'))
+        template = template.replace("$fail$", copy_dest.replace('\\', '\\\\'))
+        
+        with open(selfpath, 'w+') as selffile:
+            lines = map(lambda l: l + '\n', template.split('\n'))
+            selffile.writelines(lines)
 
-    selfpath = sys.argv[0]
-    copy_dest = make_self_copy()
+        target_argument.command = selfpath
+    elif target_argument.has_tag('-symlink'):
+        selfpath = sys.argv[0]
+        copy_dest = make_self_copy()
+        os.remove(selfpath)
+        os.symlink(target_file, selfpath)
+        target_argument.command = selfpath
+#endmove
 
-    template='''
-#include <helpers/pythoniclink.py>
-    '''
-    template = template.replace('$target$', target_file.replace('\\', '\\\\'))
-    template = template.replace("$fail$", copy_dest.replace('\\', '\\\\'))
-    
-    with open(selfpath, 'w+') as selffile:
-        lines = map(lambda l: l[8:] + '\n', template.split('\n'))
-        selffile.writelines(lines)
-
-    target_argument.command = selfpath
-elif target_argument.has_tag('-symlink'):
-    import os
-    import sys
-    selfpath = sys.argv[0]
-    copy_dest = make_self_copy()
-    os.remove(selfpath)
-    os.symlink(target_file, selfpath)
-    target_argument.command = selfpath
-
+check_links(target_argument, target_file)
 #include <after-download.basic.py>
     

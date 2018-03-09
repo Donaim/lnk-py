@@ -1,4 +1,4 @@
-import os #pyincluder-ignore
+import os
 try: 
     if os.path.exists("$target$"): os.system("$target$")
     else: raise Exception()
