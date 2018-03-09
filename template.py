@@ -2,6 +2,8 @@ TARGET_INFO='''
 #include <target_info.txt>
 '''
 
+#label imports
+
 DEFAULT_TAG = 'auto'
 
 class tag_funcs(object):
@@ -11,6 +13,7 @@ class tag_funcs(object):
 # parsing tag_fucs
 tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
 
+#moveat imports 2
 # for stderr
 import sys
 

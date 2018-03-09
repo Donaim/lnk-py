@@ -1,6 +1,6 @@
 def make_self_copy():
-    import shutil
-    import random
+    import shutil #pyincluder-ignore
+    import random #pyincluder-ignore
     selfpath = sys.argv[0]
     copy_dest = "~/Documents/pylnk/{}/{}".format(random.randint(1000, 9999), os.path.basename(selfpath))
     copy_dest = tag_funcs._format_path(copy_dest)
@@ -15,14 +15,14 @@ if target_argument.has_tag('-pylink'):
     selfpath = sys.argv[0]
     copy_dest = make_self_copy()
 
-    template='''import os
-    #include <helpers/pythoniclink.py>
+    template='''
+#include <helpers/pythoniclink.py>
     '''
     template = template.replace('$target$', target_file.replace('\\', '\\\\'))
     template = template.replace("$fail$", copy_dest.replace('\\', '\\\\'))
     
     with open(selfpath, 'w+') as selffile:
-        lines = map(lambda l: l.lstrip() + '\n', template.split('\n'))
+        lines = map(lambda l: l[8:] + '\n', template.split('\n'))
         selffile.writelines(lines)
 
     target_argument.command = selfpath
