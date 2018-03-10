@@ -2,7 +2,7 @@ TARGET_INFO='''
 #include <target_info.txt>
 '''
 
-#label imports
+#label imports if !leave_imports
 
 DEFAULT_TAG = 'auto'
 
