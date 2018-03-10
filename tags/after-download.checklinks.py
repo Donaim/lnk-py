@@ -14,18 +14,14 @@ def check_links(target_argument, target_file):
         selfpath = sys.argv[0]
         copy_dest = make_self_copy()
 
-        template='''import os
-try: 
-    if os.path.exists("$target$"): os.system("$target$")
-    else: raise Exception()
-except: os.system("$fail$")
+        template='''
+#include <helpers/pythoniclink.py>
         '''
         template = template.replace('$target$', target_file.replace('\\', '\\\\'))
         template = template.replace("$fail$", copy_dest.replace('\\', '\\\\'))
-        
+
         with open(selfpath, 'w+') as selffile:
-            lines = map(lambda l: l + '\n', template.split('\n'))
-            selffile.writelines(lines)
+            selffile.write(template)
 
         target_argument.command = selfpath
     elif target_argument.has_tag('-symlink'):
