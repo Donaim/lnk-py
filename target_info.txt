@@ -1,8 +1,8 @@
-$[-pylink] ~/Desktop/Probf/primitive.py
-#$[-symlink] ~/Desktop/Probf/primitive.py
-$[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+# $[-pylink] ~/Desktop/Probf/primitive.py
+# $[-symlink] ~/Desktop/Probf/primitive.py
+# $[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 # https://github.com/Donaim/ProblemFlawiusza.git
-$ -windows  ,  local
+# $ -windows  ,  local
 
 # jest tutaj miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
 # second non-emty non-comment line is defined to be the beginning of TARGET_INFO string
