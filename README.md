@@ -10,7 +10,7 @@ Because lnk.py file has to be a **single** file, building such file needs to be 
 For that purpos there is pyincluder.py
 
 # To do
-- git versioning
-- installers
-- target argumets flags (like windows/linux)
-- script arguments parsing (f.e. "$lnk-py:path" if only want to get path printed on stdout, or additionally download if not present)
+- [ ] git versioning
+- [ ] installers
+- [X] target argumets flags (like windows/linux)
+- [ ] script arguments parsing (f.e. "$lnk-py:path" if only want to get path printed on stdout, or additionally download if not present)
