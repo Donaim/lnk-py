@@ -27,6 +27,7 @@ class arg(object):
         self.command = None
         self.tags = []
     def has_tag(self, tname): return any(map(lambda t: t.name == tname, self.tags))
+    def __repr__(self): return '(command:"{}"  tags:[{}])'.format(self.command, ','.join(map(lambda t: t.name, self.tags)))
 class tag(object):
     def __init__(self, name, func):
         self.name = name

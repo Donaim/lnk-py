@@ -1,8 +1,8 @@
 TARGET_INFO='''
 $[-pylink] ~/Desktop/Probf/primitive.py
-# $[-symlink] ~/Desktop/Probf/primitive.py
-$[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+$[-symlink] ~/Desktop/Probf/primitive.py
 $[-linux] https://github.com/Donaim/ProblemFlawiusza.git
+$[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
 # $ -windows  ,  local
 
 # jest tutaj miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
@@ -303,6 +303,7 @@ class arg(object):
         self.command = None
         self.tags = []
     def has_tag(self, tname): return any(map(lambda t: t.name == tname, self.tags))
+    def __repr__(self): return '(command:"{}"  tags:[{}])'.format(self.command, ','.join(map(lambda t: t.name, self.tags)))
 class tag(object):
     def __init__(self, name, func):
         self.name = name
