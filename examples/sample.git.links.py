@@ -1,8 +1,8 @@
 TARGET_INFO='''
 $[-pylink] ~/Desktop/Probf/primitive.py
 # $[-symlink] ~/Desktop/Probf/primitive.py
-https://github.com/Donaim/ProblemFlawiusza.git
 $[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+$[-linux] https://github.com/Donaim/ProblemFlawiusza.git
 # $ -windows  ,  local
 
 # jest tutaj miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
@@ -21,6 +21,7 @@ import os
 import subprocess
 import os
 import subprocess
+import platform
 
 DEFAULT_TAG = 'auto'
 
@@ -279,6 +280,20 @@ class tag_funcs(object):
 
 
     pass
+def init_func(arg):
+    
+    
+    osname = platform.system()
+    
+    if arg.has_tag('-linux'):
+        if osname != 'Linux': args_list.remove(arg)
+    elif arg.has_tag('-windows'):
+        if osname != 'Windows': args_list.remove(arg)
+    
+
+    
+
+    pass
 
 # parsing tag_fucs
 tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
@@ -344,13 +359,19 @@ def parse_args():
             a.tags = parse_tags(aleft) + group_tags
             a.command = aright
             args_list.append(a)
-    
-    #invoking tags
+def init_args():
+    for a in args_list.copy():
+        init_func(a)
+def invoke_tags():
     for a in args_list:
         for t in a.tags:
             if t.invoke(a): return      # if some tag succeded with args, end the program
-
 tags_dict = dict(map(lambda name: (name, tag(name, getattr(tag_funcs, name))), tag_funcs_static))
 args_list = []
-parse_args()
 
+def main():
+    parse_args()
+    init_args()
+    invoke_tags()
+if __name__ == "__main__":
+    main()

@@ -11,6 +11,9 @@ DEFAULT_TAG = 'auto'
 class tag_funcs(object):
     #include <tag_funcs.py>
     pass
+def init_func(arg):
+    #include <init_func.py>
+    pass
 
 # parsing tag_fucs
 tag_funcs_static = filter(lambda name: name[0] != '_', dir(tag_funcs))
@@ -80,13 +83,19 @@ def parse_args():
             a.tags = parse_tags(aleft) + group_tags
             a.command = aright
             args_list.append(a)
-    
-    #invoking tags
+def init_args():
+    for a in args_list.copy():
+        init_func(a)
+def invoke_tags():
     for a in args_list:
         for t in a.tags:
             if t.invoke(a): return      # if some tag succeded with args, end the program
-
 tags_dict = dict(map(lambda name: (name, tag(name, getattr(tag_funcs, name))), tag_funcs_static))
 args_list = []
-parse_args()
 
+def main():
+    parse_args()
+    init_args()
+    invoke_tags()
+if __name__ == "__main__":
+    main()
