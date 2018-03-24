@@ -3,7 +3,7 @@ def make_self_copy():
     import shutil #pyincluder-ignore
     import random #pyincluder-ignore
     selfpath = sys.argv[0]
-    copy_dest = "~/Documents/pylnk/{}/{}".format(random.randint(1000, 9999), os.path.basename(selfpath))
+    copy_dest = "~/pylnk/{}/{}".format(random.randint(1000, 9999), os.path.basename(selfpath))
     copy_dest = tag_funcs._format_path(copy_dest)
     print("copydest=", copy_dest)
     if not os.path.exists(os.path.dirname(copy_dest)): os.makedirs(os.path.dirname(copy_dest))
