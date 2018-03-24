@@ -1,8 +1,8 @@
 TARGET_INFO='''
 $[-pylink] ~/Desktop/Probf/primitive.py
 $[-symlink] ~/Desktop/Probf/primitive.py
-$[-linux] https://github.com/Donaim/ProblemFlawiusza.git
 $[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/primitive.py
+$[-linux] https://github.com/Donaim/ProblemFlawiusza.git
 # $ -windows  ,  local
 
 # jest tutaj miejsce dla adresow. wyszukiwanie jest pryorytetowane z gory do dolu
@@ -14,22 +14,21 @@ $[-windows] https://raw.githubusercontent.com/Donaim/ProblemFlawiusza/master/pri
 import sys
 import re
 import os
-import sys
-import subprocess
 import urllib.request
 import os
 import subprocess
 import os
 import subprocess
-import platform
+import os
 
 DEFAULT_TAG = 'auto'
 
+osname = os.name
 def make_self_copy():
     import shutil #pyincluder-ignore
     import random #pyincluder-ignore
     selfpath = sys.argv[0]
-    copy_dest = "~/Documents/pylnk/{}/{}".format(random.randint(1000, 9999), os.path.basename(selfpath))
+    copy_dest = "~/pylnk/{}/{}".format(random.randint(1000, 9999), os.path.basename(selfpath))
     copy_dest = tag_funcs._format_path(copy_dest)
     print("copydest=", copy_dest)
     if not os.path.exists(os.path.dirname(copy_dest)): os.makedirs(os.path.dirname(copy_dest))
@@ -152,23 +151,14 @@ class tag_funcs(object):
     
     def _is_pathname_valid(pathname: str) -> bool: # https://stackoverflow.com/a/34102855/7038168
         try:
-            
-            if len(pathname) < 1: return False
-            _, pathname = os.path.splitdrive(pathname)
-            root_dirname = os.environ.get('HOMEDRIVE', 'C:') \
-                if sys.platform == 'win32' else os.path.sep
-            assert os.path.isdir(root_dirname)   # ...Murphy and her ironclad Law
-            root_dirname = root_dirname.rstrip(os.path.sep) + os.path.sep
-            for pathname_part in pathname.split(os.path.sep):
-                try: os.lstat(root_dirname + pathname_part)
-                except OSError as exc:
-                    if hasattr(exc, 'winerror'):
-                        if exc.winerror == 123: # ERROR_INVALID_NAME = 123
-                            return False
-                    elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
-                        return False
-        except TypeError as exc: return False
-        else: return True
+            full = os.path.expanduser(pathname)
+            if osname == 'posix':
+                return full[0] == os.path.sep # the only condition
+            elif osname == 'nt': # thats windows
+                return full[1] == ':' and full[2] == os.path.sep
+        except:
+            return False
+
     
     def _is_valid_git(url: str):
         return url.endswith(".git")
@@ -283,12 +273,12 @@ class tag_funcs(object):
 def init_func(arg):
     
     
-    osname = platform.system()
+    osname = os.name
     
     if arg.has_tag('-linux'):
-        if osname != 'Linux': args_list.remove(arg)
+        if osname != 'posix': args_list.remove(arg)
     elif arg.has_tag('-windows'):
-        if osname != 'Windows': args_list.remove(arg)
+        if osname != 'nt': args_list.remove(arg)
     
 
     

@@ -1,4 +1,3 @@
-
 #include <helpers/url_regex.py>
 #include <helpers/is_pathname_valid.py>
 
