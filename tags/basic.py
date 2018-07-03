@@ -19,7 +19,7 @@ def local(a):
     if not os.path.exists(path): raise Exception("local path \"{}\" does not exist!".format(path))
     
     try:
-        subprocess.call([path] + sys.argv[1:], shell=True)
+        subprocess.call([path] + sys.argv[1:], shell=False)
     except Exception as ex:
         print("Couldn't open file {}".format(path), file=sys.stderr)
         raise ex
